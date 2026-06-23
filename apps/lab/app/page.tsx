@@ -13,7 +13,7 @@ export default function Home() {
 					Southern Cross Lab
 				</p>
 				<h1 className="text-2xl md:text-3xl font-heading tracking-wide" style={{color: "#E8EFF8", textShadow: "0 2px 30px rgba(0,0,0,0.8)"}}>
-					Hirohisa ASANO の AI 開発実験室
+					AI をつくり、試す場所。
 				</h1>
 			</section>
 
