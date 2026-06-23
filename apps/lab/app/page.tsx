@@ -14,14 +14,14 @@ export default function Home() {
 					Southern Cross Lab
 				</p>
 				<h1 className="text-3xl md:text-5xl font-heading leading-snug tracking-wide" style={{color: "#E8EFF8", textShadow: "0 2px 30px rgba(0,0,0,0.8)"}}>
-					世界は征服する戦場ではなく、
+					小さく作り、出して、
 					<br />
-					共に航海する海である。
+					反応があったものだけ育てる。
 				</h1>
 				<p className="mt-8 max-w-md leading-relaxed" style={{color: "#A8B8D0", textShadow: "0 1px 10px rgba(0,0,0,0.6)"}}>
-					小さな道具を作り、試し、手放す。
+					365個のアイデアから10個を作る。
 					<br />
-					航海に必要なものだけが、手元に残る。
+					最初から正解を探さない。
 				</p>
 				<div className="mt-12 w-px h-16 bg-border" />
 			</section>
@@ -33,34 +33,34 @@ export default function Home() {
 						<div className="flex flex-col items-center text-center">
 							<Star className="h-6 w-6 text-primary mb-5" />
 							<h3 className="font-heading text-lg mb-3">
-								星を読む
+								アイデアを出す
 							</h3>
 							<p className="text-sm text-muted-foreground leading-relaxed">
-								まだ見えない島のために、
+								良し悪しを判断しない。
 								<br />
-								まず空を見上げる。
+								とにかく数を出す。
 							</p>
 						</div>
 						<div className="flex flex-col items-center text-center">
 							<Compass className="h-6 w-6 text-primary mb-5" />
 							<h3 className="font-heading text-lg mb-3">
-								小舟を出す
+								作って出す
 							</h3>
 							<p className="text-sm text-muted-foreground leading-relaxed">
-								完璧な船を待たない。
+								完璧を待たない。
 								<br />
-								小さく漕ぎ出す。
+								3日以内に動くものを作る。
 							</p>
 						</div>
 						<div className="flex flex-col items-center text-center">
 							<Map className="h-6 w-6 text-primary mb-5" />
 							<h3 className="font-heading text-lg mb-3">
-								航路を記す
+								反応を見る
 							</h3>
 							<p className="text-sm text-muted-foreground leading-relaxed">
-								辿り着いた場所を記録し、
+								使われたものだけを育てる。
 								<br />
-								次の航海者に残す。
+								反応がなければ潔く手放す。
 							</p>
 						</div>
 					</div>
@@ -71,10 +71,10 @@ export default function Home() {
 			<section className="px-4 py-24">
 				<div className="mx-auto max-w-3xl">
 					<h2 className="font-heading text-xl text-center mb-2">
-						航海の道具たち
+						プロダクト
 					</h2>
 					<p className="text-center text-sm text-muted-foreground mb-12">
-						この海で見つけた、小さなプロダクト。
+						作って出したもの。反応を見ている。
 					</p>
 					{apps.length > 0 ? (
 						<div className="grid gap-4 md:grid-cols-2">
@@ -94,9 +94,9 @@ export default function Home() {
 							))}
 						</div>
 					) : (
-						<p className="text-center text-muted-foreground text-sm">
-							最初の航海の準備中。
-						</p>
+					<p className="text-center text-muted-foreground text-sm">
+						7/12 公開予定。準備中。
+					</p>
 					)}
 				</div>
 			</section>
