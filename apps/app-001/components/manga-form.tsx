@@ -15,6 +15,8 @@ const MOOD_TAGS = [
 	{ label: "💕 恋愛", value: "恋愛" },
 	{ label: "⚔️ 冒険", value: "冒険" },
 	{ label: "🍵 日常系", value: "日常系" },
+	{ label: "👑 メジャー", value: "有名・メジャーな作品" },
+	{ label: "💎 マイナー", value: "隠れた名作・マイナーな作品" },
 ];
 
 const GENRE_COLORS: Record<string, string> = {
