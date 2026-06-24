@@ -67,12 +67,15 @@ export default async function Home() {
 					</p>
 					{apps.length > 0 ? (
 						<div className="space-y-6">
-							{apps.map((app) => (
+							{apps.map((app, idx) => (
 								<a
 									key={app.name}
 									href={app.url}
 									className="block p-6 md:p-8 rounded-[var(--radius)] border border-border bg-[#1A2640]/90 backdrop-blur-sm hover:border-primary/50 transition-colors relative"
 								>
+									<span className="text-[10px] tracking-wider text-muted-foreground/40 absolute top-4 left-4 md:top-6 md:left-6">
+										#{idx + 1}
+									</span>
 									{app.isNew && (
 										<span className="absolute top-4 right-4 md:top-6 md:right-6 text-[10px] tracking-wider uppercase text-primary border border-primary/30 rounded-full px-2 py-0.5">
 											New
