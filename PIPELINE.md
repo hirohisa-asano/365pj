@@ -385,33 +385,50 @@ apps/app-NNN/SCORECARD.md:
 
 ---
 
-## スクリプト・コマンド設計
+## コマンド設計
 
-毎日自動実行に向けて、各スクリプトは以下を守る:
+全て Claude Code カスタムコマンド（`.claude/commands/`）で実装。
+`scripts/` は使わない — Claude Code で完結する。
 
-1. **対話的な入力を求めない**（CLI引数 or 設定ファイルで完結）
+設計原則:
+1. **対話的な入力を求めない**（`$ARGUMENTS` で完結）
 2. **冪等にする**（2回実行しても壊れない）
 3. **スコアを出力する**（SCORECARD.md に記録）
 
 ```
 365pj/
-├── scripts/
-│   ├── demand-scan.ts     ← フェーズ0: 需要分析
-│   ├── init-app.ts        ← フェーズ1: アプリ初期化
-│   ├── deploy.sh          ← フェーズ4: ワンコマンドデプロイ
-│   ├── legal-check.ts     ← フェーズ3: リーガルチェック
-│   ├── generate-pr.ts     ← フェーズ5: マーケ文生成
-│   └── analytics.ts       ← 反応トラッキング
+├── templates/
+│   └── SCORECARD.md                ← スコアカードテンプレート
 ├── .claude/
 │   └── commands/
+│       ├── pipeline.md             ← /pipeline 全フェーズ一括実行
+│       ├── demand-scan.md          ← /demand-scan 需要分析
 │       ├── new-app.md              ← /new-app アプリ初期化
-│       ├── ship.md                 ← /ship デプロイ+PR生成
-│       ├── legal.md                ← /legal リーガルチェック
+│       ├── implement.md            ← /implement 実装
 │       ├── review-architecture.md  ← /review-architecture 設計レビュー
 │       ├── review-design.md        ← /review-design UI/UXレビュー
 │       ├── review-security.md      ← /review-security セキュリティレビュー
-│       └── review-all.md           ← /review-all 全レビュー一括
+│       ├── review-all.md           ← /review-all 全レビュー一括
+│       ├── legal.md                ← /legal リーガルチェック
+│       ├── ship.md                 ← /ship デプロイ
+│       └── marketing.md            ← /marketing PR文生成
 ```
+
+### コマンド一覧
+
+| コマンド | フェーズ | 入力例 |
+|----------|---------|--------|
+| `/demand-scan` | 0: 需要分析 | `/demand-scan` or `/demand-scan AI` |
+| `/new-app` | 1: 計画立案 | `/new-app #27` or `/new-app LLMコスト計算ツール` |
+| `/implement` | 2: 実装 | `/implement app-003` |
+| `/review-architecture` | 2.5: 設計レビュー | `/review-architecture app-003` |
+| `/review-design` | 2.5: UI/UXレビュー | `/review-design app-003` |
+| `/review-security` | 2.5: セキュリティ | `/review-security app-003` |
+| `/review-all` | 2.5: 全レビュー | `/review-all app-003` |
+| `/legal` | 3: リーガル | `/legal app-003` |
+| `/ship` | 4: 公開 | `/ship app-003 llm-cost` |
+| `/marketing` | 5: マーケ | `/marketing app-003` |
+| `/pipeline` | 全フェーズ | `/pipeline #27` or `/pipeline LLMコスト計算ツール` |
 
 ---
 
