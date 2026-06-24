@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme inline {
+	--color-primary: var(--tone-primary);
+	--color-primary-foreground: var(--tone-primary-foreground);
+	--color-background: var(--tone-background);
+	--color-foreground: var(--tone-foreground);
+	--color-muted: var(--tone-muted);
+	--color-muted-foreground: var(--tone-muted-foreground);
+	--color-border: var(--tone-border);
+	--radius: var(--tone-radius);
+	--font-heading: var(--tone-font-heading);
+	--font-body: var(--tone-font-body);
+}
+
+body {
+	background: var(--color-background);
+	color: var(--color-foreground);
+	font-family: var(--font-body);
+}
