@@ -2,6 +2,7 @@
 
 import { Loader2, RotateCcw, Sparkles } from "lucide-react";
 import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 const MOOD_TAGS = [
 	{ label: "🔥 熱い展開", value: "熱い展開" },
@@ -43,6 +44,11 @@ export function MangaForm() {
 	const [results, setResults] = useState<Recommendation[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
+	const [limitType, setLimitType] = useState<"login" | "member" | null>(null);
+	const [guestCount, setGuestCount] = useState(() => {
+		if (typeof window === "undefined") return 0;
+		return Number(localStorage.getItem("manga-ai-count") || "0");
+	});
 
 	const handleAddFavorite = () => {
 		if (favorites.length < 3) {
@@ -64,6 +70,16 @@ export function MangaForm() {
 		);
 	};
 
+	const handleLogin = async () => {
+		const supabase = createClient();
+		await supabase.auth.signInWithOAuth({
+			provider: "google",
+			options: {
+				redirectTo: `${window.location.origin}/auth/callback`,
+			},
+		});
+	};
+
 	const handleSubmit = async () => {
 		const validFavorites = favorites
 			.map((f) => f.value)
@@ -75,6 +91,7 @@ export function MangaForm() {
 
 		setLoading(true);
 		setError("");
+		setLimitType(null);
 		setResults([]);
 
 		try {
@@ -85,15 +102,21 @@ export function MangaForm() {
 					favorites: validFavorites,
 					mood: selectedMoods.join("、"),
 					freeText,
+					guestCount,
 				}),
 			});
 
 			const data = await res.json();
 
-			if (data.error) {
+			if (data.error === "limit") {
+				setLimitType(data.limitType);
+			} else if (data.error) {
 				setError(data.error);
 			} else {
 				setResults(data.recommendations);
+				const newCount = guestCount + 1;
+				setGuestCount(newCount);
+				localStorage.setItem("manga-ai-count", String(newCount));
 			}
 		} catch {
 			setError("通信エラーが発生しました");
@@ -225,7 +248,7 @@ export function MangaForm() {
 									</span>
 								</div>
 								<a
-									href={`/api/link?q=${encodeURIComponent(`${rec.title} ${rec.author}`)}`}
+									href={`/api/link?q=${encodeURIComponent(rec.title)}`}
 									target="_blank"
 									rel="noopener noreferrer"
 									className="min-w-0 pb-5 border-b border-border/50 flex-1 group"
@@ -244,6 +267,40 @@ export function MangaForm() {
 							</div>
 						))}
 					</div>
+				</div>
+			)}
+
+			{/* 制限メッセージ */}
+			{limitType === "login" && (
+				<div className="pt-8 text-center space-y-3">
+					<p className="text-sm text-foreground">無料枠を使い切りました</p>
+					<p className="text-xs text-muted-foreground">
+						ログインすると1日10回まで使えます
+					</p>
+					<button
+						type="button"
+						onClick={handleLogin}
+						className="inline-flex items-center gap-2 px-5 py-2.5 rounded-[var(--radius)] bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+					>
+						Googleでログイン
+					</button>
+				</div>
+			)}
+
+			{limitType === "member" && (
+				<div className="pt-8 text-center space-y-3">
+					<p className="text-sm text-foreground">
+						本日の利用上限（10回）に達しました
+					</p>
+					<p className="text-xs text-muted-foreground">
+						メンバーになると無制限で使えます
+					</p>
+					<a
+						href="https://southerncrosslab.com"
+						className="inline-flex items-center gap-2 px-5 py-2.5 rounded-[var(--radius)] bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+					>
+						メンバーになる
+					</a>
 				</div>
 			)}
 		</div>
