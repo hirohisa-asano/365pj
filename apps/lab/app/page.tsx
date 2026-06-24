@@ -8,7 +8,15 @@ const apps: {
 	features: string[];
 	url: string;
 	isNew?: boolean;
+	comingSoon?: boolean;
 }[] = [
+	{
+		name: "副業バレリスク診断",
+		description: "副業が会社にバレるリスクを3つの質問で診断。対策もわかる",
+		features: ["バレリスク0-100%", "バレるルート分析", "対策チェックリスト"],
+		url: "https://fukugyo-check.southerncrosslab.com",
+		comingSoon: true,
+	},
 	{
 		name: "漫画提案AI",
 		description: "好きな作品と気分から、AIがぴったりの漫画を見つける",
@@ -67,38 +75,50 @@ export default async function Home() {
 					</p>
 					{apps.length > 0 ? (
 						<div className="space-y-6">
-							{apps.map((app, idx) => (
-								<a
-									key={app.name}
-									href={app.url}
-									className="block p-6 md:p-8 rounded-[var(--radius)] border border-border bg-[#1A2640]/90 backdrop-blur-sm hover:border-primary/50 transition-colors relative"
-								>
-									<span className="text-[10px] tracking-wider text-muted-foreground/40 absolute top-4 left-4 md:top-6 md:left-6">
-										#{idx + 1}
-									</span>
-									{app.isNew && (
-										<span className="absolute top-4 right-4 md:top-6 md:right-6 text-[10px] tracking-wider uppercase text-primary border border-primary/30 rounded-full px-2 py-0.5">
-											New
+							{apps.map((app, idx) => {
+								const Tag = app.comingSoon ? "div" : "a";
+								return (
+									<Tag
+										key={app.name}
+										{...(app.comingSoon ? {} : { href: app.url })}
+										className={`block p-6 md:p-8 rounded-[var(--radius)] border border-border bg-[#1A2640]/90 backdrop-blur-sm transition-colors relative ${
+											app.comingSoon
+												? "opacity-70 cursor-default"
+												: "hover:border-primary/50"
+										}`}
+									>
+										<span className="text-[10px] tracking-wider text-muted-foreground/40 absolute top-4 left-4 md:top-6 md:left-6">
+											#{idx + 1}
 										</span>
-									)}
-									<h3 className="text-xl md:text-2xl font-bold text-white">
-										{app.name}
-									</h3>
-									<p className="mt-2 text-sm md:text-base text-muted-foreground">
-										{app.description}
-									</p>
-									<ul className="mt-4 flex flex-wrap gap-2">
-										{app.features.map((feature) => (
-											<li
-												key={feature}
-												className="text-xs md:text-sm text-primary/80 border border-primary/20 rounded-full px-3 py-1"
-											>
-												{feature}
-											</li>
-										))}
-									</ul>
-								</a>
-							))}
+										{app.comingSoon && (
+											<span className="absolute top-4 right-4 md:top-6 md:right-6 text-[10px] tracking-wider uppercase text-amber-400 border border-amber-400/30 rounded-full px-2 py-0.5">
+												Coming Soon
+											</span>
+										)}
+										{app.isNew && !app.comingSoon && (
+											<span className="absolute top-4 right-4 md:top-6 md:right-6 text-[10px] tracking-wider uppercase text-primary border border-primary/30 rounded-full px-2 py-0.5">
+												New
+											</span>
+										)}
+										<h3 className="text-xl md:text-2xl font-bold text-white">
+											{app.name}
+										</h3>
+										<p className="mt-2 text-sm md:text-base text-muted-foreground">
+											{app.description}
+										</p>
+										<ul className="mt-4 flex flex-wrap gap-2">
+											{app.features.map((feature) => (
+												<li
+													key={feature}
+													className="text-xs md:text-sm text-primary/80 border border-primary/20 rounded-full px-3 py-1"
+												>
+													{feature}
+												</li>
+											))}
+										</ul>
+									</Tag>
+								);
+							})}
 						</div>
 					) : (
 						<p className="text-center text-muted-foreground text-sm">
