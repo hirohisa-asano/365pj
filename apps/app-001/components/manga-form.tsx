@@ -225,7 +225,7 @@ export function MangaForm() {
 									</span>
 								</div>
 								<a
-									href={`https://www.amazon.co.jp/s?k=${encodeURIComponent(`${rec.title} ${rec.author}`)}&i=stripbooks&tag=southerncro08-22`}
+									href={`/api/link?q=${encodeURIComponent(`${rec.title} ${rec.author}`)}`}
 									target="_blank"
 									rel="noopener noreferrer"
 									className="min-w-0 pb-5 border-b border-border/50 flex-1 group"
