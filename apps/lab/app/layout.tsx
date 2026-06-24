@@ -19,7 +19,7 @@ const notoSerifJP = Noto_Serif_JP({
 export const metadata: Metadata = {
 	title: "Southern Cross Lab",
 	description: "Webアプリの実験場。作っては出す。試しては変える。",
-	metadataBase: new URL("https://southernlabs.com"),
+	metadataBase: new URL("https://southerncrosslab.com"),
 };
 
 export default function RootLayout({

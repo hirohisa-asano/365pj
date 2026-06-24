@@ -265,7 +265,7 @@ claude -p "PIPELINE.md に基づいて今日のアプリを作ってデプロイ
 1. Vercel プロジェクト作成 (vercel CLI)
 2. 環境変数セット (vercel env)
 3. Supabase スキーマ作成 (supabase migration)（DB使用時のみ）
-4. サブドメイン設定 (vercel domains add {name}.southernlabs.com)
+4. サブドメイン設定 (vercel domains add {name}.southerncrosslab.com)
 5. デプロイ (vercel --prod)
 6. ポータル (apps/lab) にリンク追加
 7. publish-log.md に公開記録追加
@@ -277,7 +277,7 @@ claude -p "PIPELINE.md に基づいて今日のアプリを作ってデプロイ
 | 指標 | Pass 基準 |
 |------|----------|
 | **デプロイ成功** | Vercel デプロイが成功（200 レスポンス） |
-| **本番URL疎通** | `{name}.southernlabs.com` にアクセスできる |
+| **本番URL疎通** | `{name}.southerncrosslab.com` にアクセスできる |
 | **OGP** | `opengraph-image.tsx` が正常に画像を返す |
 | **ポータル更新** | `apps/lab` にリンクが追加されている |
 | **Discord通知** | `#お知らせ` に投稿されている |

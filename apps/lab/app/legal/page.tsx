@@ -42,7 +42,7 @@ export default function LegalPage() {
 								"メールアドレス",
 								"locamoca-info@locamoca-inc.com",
 							],
-							["URL", "https://southernlabs.com"],
+							["URL", "https://southerncrosslab.com"],
 							[
 								"販売価格",
 								"各サービスページに記載（寄付は任意の金額）",

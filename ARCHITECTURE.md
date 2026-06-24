@@ -34,7 +34,7 @@
 │   └── publish-log.md        ← 公開ログ・反応記録
 └── apps/
     ├── template/             ← 新規アプリ作成時のベーステンプレート
-    ├── lab/                  ← サザンクロスラボ（ポータルページ）
+    ├── lab/                  ← Southern Cross Lab（ポータルページ）
     ├── app-001/              ← アプリ1本目
     └── app-002/              ← アプリ2本目 ...
 ```
@@ -74,8 +74,8 @@ apps/app-NNN/
 - ドメイン構成：
 
 ```
-southernlabs.com              ← apps/lab/（ポータル）
-{サービス名}.southernlabs.com  ← apps/app-NNN/（サービスに合った名前）
+southerncrosslab.com              ← apps/lab/（ポータル）
+{サービス名}.southerncrosslab.com  ← apps/app-NNN/（サービスに合った名前）
 ```
 
 ---
@@ -164,7 +164,7 @@ export const tone = {
 3. Vercel で新規プロジェクト作成、ルートディレクトリに `apps/app-NNN` を指定
 4. Supabase でスキーマ `app_NNN` を作成（Supabase CLI）
 5. `.env.local` に接続情報を設定
-6. Vercel にサブドメイン `{サービス名}.southernlabs.com` を設定
+6. Vercel にサブドメイン `{サービス名}.southerncrosslab.com` を設定
 7. 開発・公開
 
 ---
@@ -175,7 +175,7 @@ export const tone = {
 | -- | -- | -- |
 | アプリディレクトリ | `app-NNN`（ゼロ埋め3桁） | `app-001` |
 | Supabase スキーマ | `app_NNN`（アンダースコア） | `app_001` |
-| サブドメイン | サービス名 | `timer.southernlabs.com` |
+| サブドメイン | サービス名 | `timer.southerncrosslab.com` |
 
 ---
 
@@ -185,13 +185,13 @@ export const tone = {
 
 ---
 
-## ラボポータル（サザンクロスラボ）の役割
+## ラボポータル（Southern Cross Lab）の役割
 
 各アプリに共通する機能・情報は、**ラボポータル側に一元管理**する。
 アプリ側はシンプルに保ち、フッターにラボへのリンクを置く。
 
 ```
-southernlabs.com（ラボポータル）
+southerncrosslab.com（ラボポータル）
 ├── 各アプリへのリンク集
 ├── 寄付動線（Stripe Payment Links）
 ├── ご意見箱（フォーム）
@@ -207,7 +207,7 @@ southernlabs.com（ラボポータル）
 
 ### フッター共通要素
 - 寄付リンク（Stripe Payment Links）
-- ポータルへのリンク（southernlabs.com）
+- ポータルへのリンク（southerncrosslab.com）
 
 ### ご意見箱
 - ラボポータル上にフォームを設置
@@ -216,4 +216,4 @@ southernlabs.com（ラボポータル）
 ### 利用規約・プライバシーポリシー
 - ラボポータルで一本化
 - アプリごとに個別に作成しない
-- 「本サービスはサザンクロスラボが提供します」という形で統一
+- 「本サービスはSouthern Cross Labが提供します」という形で統一

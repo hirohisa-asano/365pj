@@ -33,14 +33,21 @@ export default function OgImage() {
 			<div
 				style={{
 					fontSize: 36,
-					color: "#D6DFF0",
+					color: "#E8EFF8",
 					textAlign: "center",
 					lineHeight: 1.6,
 				}}
 			>
-				世界は征服する戦場ではなく、
-				<br />
-				共に航海する海である。
+				Web アプリの実験場
+			</div>
+			<div
+				style={{
+					fontSize: 18,
+					color: "#B0C0D4",
+					marginTop: 16,
+				}}
+			>
+				作っては出す。試しては変える。
 			</div>
 		</div>,
 	);

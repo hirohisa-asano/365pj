@@ -41,7 +41,7 @@
 - Supabase スキーマは `app_NNN` で分割
 - 認証不要のアプリでは Auth 関連コードを削除
 - ブランチ戦略は main 直接
-- ドメインは `{サービス名}.southernlabs.com`
+- ドメインは `{サービス名}.southerncrosslab.com`
 
 ## 環境変数
 

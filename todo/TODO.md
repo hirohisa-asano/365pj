@@ -2,8 +2,8 @@
 
 ## 優先タスク
 
-- [ ] サザンクロスラボを作る（`apps/lab/`）
-  - [ ] ドメイン取得（southernlabs.com など）
+- [ ] Southern Cross Labを作る（`apps/lab/`）
+  - [ ] ドメイン取得（southerncrosslab.com など）
   - [ ] Vercel にデプロイ
   - [ ] トップページ
   - [ ] 各アプリへのリンク集

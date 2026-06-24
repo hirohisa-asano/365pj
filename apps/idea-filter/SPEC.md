@@ -109,7 +109,7 @@ create table idea_filter.ideas (
 
 - フッターに Buy Me a Coffee リンク
 - 「気に入ったら」程度のトーン
-- ラボポータル（southernlabs.com）へのリンクも置く
+- ラボポータル（southerncrosslab.com）へのリンクも置く
 
 ---
 

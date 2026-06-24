@@ -152,7 +152,7 @@ tone.config・レイアウト・ユーザビリティを評価:
 
 1. `cd apps/app-{NNN} && vercel --yes && vercel --prod`
 2. 環境変数セット（`.env.local` から読み取り）
-3. ドメイン設定: `vercel domains add {subdomain}.southernlabs.com`
+3. ドメイン設定: `vercel domains add {subdomain}.southerncrosslab.com`
 4. Supabase マイグレーション（DB使用時のみ）: `supabase db push`
 5. 再デプロイ（環境変数反映）: `vercel --prod`
 6. `apps/lab/app/page.tsx` の `apps` 配列にエントリ追加
@@ -190,7 +190,7 @@ SPEC.md + 公開URL からPR文を生成:
 📋 パイプライン完了: app-{NNN} — {アプリ名}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-🌐 URL: https://{subdomain}.southernlabs.com
+🌐 URL: https://{subdomain}.southerncrosslab.com
 
 📊 スコア:
   Phase 1 計画:     {score}/30

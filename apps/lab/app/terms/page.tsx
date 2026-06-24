@@ -31,7 +31,7 @@ export default function TermsPage() {
 						アプリケーション群のポータルサイトおよび各アプリケーション（以下「各アプリ」）を指します。
 					</p>
 					<p className="mt-2">
-						各アプリは southernlabs.com
+						各アプリは southerncrosslab.com
 						のサブドメインで提供され、それぞれ独立した機能を持ちますが、本利用規約が共通して適用されます。
 					</p>
 				</section>
