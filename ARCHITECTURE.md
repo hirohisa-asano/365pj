@@ -83,23 +83,37 @@ southernlabs.com              ← apps/lab/（ポータル）
 ## Supabase 構成
 
 - **1プロジェクト** を共有
-- アプリごとに **PostgreSQL スキーマ** を分割
+- 認証・ユーザー情報は **共通スキーマ（public）** で一元管理
+- アプリ固有データは **アプリごとのスキーマ** に分割
 - マイグレーションは **Supabase CLI** で管理
 
 ```
 Supabase（1プロジェクト）
-├── schema: app_001
+├── auth.users              ← Supabase Auth（全アプリ共通・自動管理）
+├── public.profiles         ← ユーザー情報（表示名・アバター等）
+├── public.memberships      ← メンバーシップ（Stripe連携・ステータス管理）
+├── schema: app_001         ← アプリ固有データ
 ├── schema: app_002
 └── schema: app_003  ...
 ```
 
+- ユーザーは **1回のログインで全アプリを利用可能**
+- メンバー判定は全アプリから `public.memberships` を参照
 - アプリが本格的に育った場合のみ、独立プロジェクトへ分離する
+
+### 共通テーブル（public スキーマ）
+
+| テーブル | 用途 | 主なカラム |
+| -- | -- | -- |
+| `profiles` | ユーザー情報 | id (= auth.users.id), display_name, avatar_url |
+| `memberships` | メンバーシップ管理 | user_id, stripe_customer_id, status, plan, expires_at |
 
 ### 認証
 
 - **Supabase Auth + Google 認証のみ**
 - ID/パスワード認証は使わない
 - 認証不要のアプリでは Auth 関連コードを削除して使う
+- 認証が必要なアプリでは `auth.users` を参照し、`public.profiles` にユーザー情報を保存
 
 ---
 
