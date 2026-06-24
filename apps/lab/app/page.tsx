@@ -9,14 +9,13 @@ const apps: {
 	url: string;
 	isNew?: boolean;
 }[] = [
-	// アプリ公開後にここに追加
-	// {
-	// 	name: "LLMコスト計算",
-	// 	description: "GPT・Claude・Geminiの月額コストをパターン別に比較できる",
-	// 	features: ["モデル別の料金比較", "利用パターンから月額を試算", "コスト最適なモデルを提案"],
-	// 	url: "https://llm-cost.southerncrosslab.com",
-	// 	isNew: true,
-	// },
+	{
+		name: "漫画提案AI",
+		description: "好きな作品と気分から、AIがぴったりの漫画を見つける",
+		features: ["好みの漫画から提案", "気分タグで絞り込み", "Amazonで即チェック"],
+		url: "https://manga-ai.southerncrosslab.com",
+		isNew: true,
+	},
 ];
 
 export default async function Home() {

@@ -110,14 +110,11 @@ export function MangaForm() {
 	};
 
 	return (
-		<div className="space-y-8">
-			{/* 入力 */}
-			<div className="space-y-5">
+		<div>
+			{/* 入力 — コンパクトにまとめる */}
+			<div className="space-y-4 pb-6 border-b border-border">
 				<div>
-					<p className="text-xs font-medium text-muted-foreground mb-2">
-						好きな漫画を教えて（1〜3作品）
-					</p>
-					<div className="space-y-2">
+					<div className="space-y-1.5">
 						{favorites.map((fav, i) => (
 							<input
 								key={fav.id}
@@ -128,13 +125,13 @@ export function MangaForm() {
 								}
 								placeholder={
 									i === 0
-										? "例: ワンピース"
+										? "好きな漫画（例: ワンピース）"
 										: i === 1
-											? "例: スラムダンク"
-											: "例: ハイキュー!!"
+											? "もう1つ（例: スラムダンク）"
+											: "もう1つ（例: ハイキュー!!）"
 								}
 								aria-label={`好きな漫画 ${i + 1}`}
-								className="w-full px-4 py-3 rounded-[var(--radius)] border border-border bg-background text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary text-sm"
+								className="w-full px-3 py-2.5 rounded-[var(--radius)] border border-border bg-background text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary text-sm"
 							/>
 						))}
 					</div>
@@ -142,81 +139,65 @@ export function MangaForm() {
 						<button
 							type="button"
 							onClick={handleAddFavorite}
-							className="mt-1.5 text-xs text-primary hover:underline"
+							className="mt-1 text-[11px] text-primary hover:underline"
 						>
-							+ もう1作品追加
+							+ 追加
 						</button>
 					)}
 				</div>
 
-				<div>
-					<p className="text-xs font-medium text-muted-foreground mb-2">
-						今の気分は？（3つまで）
-					</p>
-					<div className="flex flex-wrap gap-1.5">
-						{MOOD_TAGS.map((mood) => (
-							<button
-								key={mood.value}
-								type="button"
-								onClick={() => toggleMood(mood.value)}
-								className={`text-xs px-3 py-1.5 rounded-full transition-all ${
-									selectedMoods.includes(mood.value)
-										? "bg-primary text-primary-foreground scale-105 shadow-sm"
-										: "bg-muted text-muted-foreground hover:bg-muted/80"
-								}`}
-							>
-								{mood.label}
-							</button>
-						))}
-					</div>
+				<div className="flex flex-wrap gap-1">
+					{MOOD_TAGS.map((mood) => (
+						<button
+							key={mood.value}
+							type="button"
+							onClick={() => toggleMood(mood.value)}
+							className={`text-[11px] px-2.5 py-1 rounded-full transition-all ${
+								selectedMoods.includes(mood.value)
+									? "bg-primary text-primary-foreground"
+									: "bg-muted/60 text-muted-foreground hover:bg-muted"
+							}`}
+						>
+							{mood.label}
+						</button>
+					))}
 				</div>
 
-				<div>
-					<label
-						htmlFor="free-text"
-						className="text-xs font-medium text-muted-foreground mb-2 block"
-					>
-						こだわりがあれば（任意）
-					</label>
-					<textarea
+				<div className="flex gap-2">
+					<input
 						id="free-text"
+						type="text"
 						value={freeText}
 						onChange={(e) => setFreeText(e.target.value)}
-						placeholder="完結済み、絵がきれい、10巻以内 など"
-						rows={2}
-						className="w-full px-4 py-3 rounded-[var(--radius)] border border-border bg-background text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary resize-none text-sm"
+						placeholder="こだわり（完結済み、10巻以内 など）"
+						aria-label="こだわり"
+						className="flex-1 px-3 py-2.5 rounded-[var(--radius)] border border-border bg-background text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary text-sm"
 					/>
+					<button
+						type="button"
+						onClick={handleSubmit}
+						disabled={loading}
+						className="shrink-0 flex items-center gap-1.5 px-5 py-2.5 rounded-[var(--radius)] bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+					>
+						{loading ? (
+							<Loader2 className="h-4 w-4 animate-spin" />
+						) : (
+							<Sparkles className="h-4 w-4" />
+						)}
+						{loading ? "探索中" : "探す"}
+					</button>
 				</div>
 
-				<button
-					type="button"
-					onClick={handleSubmit}
-					disabled={loading}
-					className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-[var(--radius)] bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-				>
-					{loading ? (
-						<>
-							<Loader2 className="h-4 w-4 animate-spin" />
-							探してる...
-						</>
-					) : (
-						<>
-							<Sparkles className="h-4 w-4" />
-							おすすめを見つける
-						</>
-					)}
-				</button>
-
 				{error && (
-					<p className="text-xs text-red-500 text-center">{error}</p>
+					<p className="text-xs text-red-500">{error}</p>
 				)}
 			</div>
 
-			{/* 結果 */}
+			{/* 結果 — 主役。広い余白で読みやすく */}
 			{results.length > 0 && (
-				<div>
-					<div className="flex items-center justify-between mb-4">
-						<p className="text-xs text-muted-foreground">
+				<div className="pt-8">
+					<div className="flex items-center justify-between mb-6">
+						<p className="text-sm font-medium">
 							あなたにはこれがハマるかも
 						</p>
 						<button
@@ -229,34 +210,37 @@ export function MangaForm() {
 							別の提案
 						</button>
 					</div>
-					<div className="space-y-3">
-						{results.map((rec) => (
+					<div className="space-y-5">
+						{results.map((rec, idx) => (
 							<div
 								key={rec.title}
-								className="flex gap-3 p-4 rounded-[var(--radius)] border border-border bg-background"
+								className="flex gap-4"
 							>
-								<div
-									className="w-1 shrink-0 rounded-full"
-									style={{
-										backgroundColor: getGenreColor(rec.genre),
-									}}
-								/>
-								<div className="min-w-0">
-									<div className="flex items-baseline gap-2">
-										<h3 className="font-bold text-base">
-											{rec.title}
-										</h3>
-										<span className="text-[10px] text-muted-foreground shrink-0">
-											{rec.genre}
-										</span>
-									</div>
+								<div className="flex flex-col items-center gap-1 pt-0.5">
+									<span
+										className="text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center text-white"
+										style={{ backgroundColor: getGenreColor(rec.genre) }}
+									>
+										{idx + 1}
+									</span>
+								</div>
+								<a
+									href={`https://www.amazon.co.jp/s?k=${encodeURIComponent(`${rec.title} ${rec.author}`)}&i=stripbooks&tag=southerncro08-22`}
+									target="_blank"
+									rel="noopener noreferrer"
+									className="min-w-0 pb-5 border-b border-border/50 flex-1 group"
+								>
+									<h3 className="font-bold text-lg leading-tight group-hover:text-primary transition-colors">
+										{rec.title}
+										<span className="text-[10px] font-normal text-muted-foreground/40 ml-1.5 group-hover:text-primary/50">↗</span>
+									</h3>
 									<p className="text-xs text-muted-foreground mt-0.5">
-										{rec.author}
+										{rec.author} · {rec.genre}
 									</p>
-									<p className="text-sm mt-2 leading-relaxed">
+									<p className="text-sm mt-2 leading-relaxed text-foreground/80">
 										{rec.reason}
 									</p>
-								</div>
+								</a>
 							</div>
 						))}
 					</div>
