@@ -18,8 +18,7 @@ const notoSerifJP = Noto_Serif_JP({
 
 export const metadata: Metadata = {
 	title: "Southern Cross Lab",
-	description:
-		"世界は征服する戦場ではなく、共に航海する海である。小さな道具を作り、航海を続ける。",
+	description: "Webアプリの実験場。作っては出す。試しては変える。",
 	metadataBase: new URL("https://southernlabs.com"),
 };
 
