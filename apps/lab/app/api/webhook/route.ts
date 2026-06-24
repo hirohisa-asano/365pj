@@ -34,15 +34,28 @@ export async function POST(request: Request) {
 		return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
 	}
 
+	console.log("Webhook event received:", event.type);
+
 	const supabase = createAdminClient();
 
 	switch (event.type) {
 		case "checkout.session.completed": {
 			const session = event.data.object as Stripe.Checkout.Session;
-			const userId = session.metadata?.user_id;
-			if (!userId) break;
+			// Payment Link では client_reference_id、Checkout API では metadata.user_id
+			const userId = session.client_reference_id ?? session.metadata?.user_id;
+			console.log("checkout.session.completed:", {
+				userId,
+				customer: session.customer,
+				subscription: session.subscription,
+				client_reference_id: session.client_reference_id,
+				metadata: session.metadata,
+			});
+			if (!userId) {
+				console.log("No userId found, skipping");
+				break;
+			}
 
-			await supabase.from("memberships").upsert(
+			const { data, error } = await supabase.from("memberships").upsert(
 				{
 					user_id: userId,
 					stripe_customer_id: session.customer as string,
@@ -52,6 +65,7 @@ export async function POST(request: Request) {
 				},
 				{ onConflict: "stripe_customer_id" },
 			);
+			console.log("Upsert result:", { data, error });
 			break;
 		}
 

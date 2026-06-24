@@ -142,7 +142,12 @@ export default async function Home() {
 					)}
 
 					{/* Member */}
-					<MemberCard user={user} isMember={isMember} />
+					<MemberCard
+						user={user}
+						isMember={isMember}
+						paymentLink={process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK}
+						portalUrl={process.env.NEXT_PUBLIC_STRIPE_PORTAL_URL}
+					/>
 				</div>
 			</section>
 		</div>
