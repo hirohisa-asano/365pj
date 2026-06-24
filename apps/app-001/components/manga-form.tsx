@@ -4,17 +4,30 @@ import { Loader2, RotateCcw, Sparkles } from "lucide-react";
 import { useState } from "react";
 
 const MOOD_TAGS = [
-	"熱い展開",
-	"考えさせられる",
-	"ほのぼの",
-	"ダーク",
-	"笑える",
-	"泣ける",
-	"サスペンス",
-	"恋愛",
-	"冒険",
-	"日常系",
+	{ label: "🔥 熱い展開", value: "熱い展開" },
+	{ label: "🤔 考えさせられる", value: "考えさせられる" },
+	{ label: "☀️ ほのぼの", value: "ほのぼの" },
+	{ label: "🌑 ダーク", value: "ダーク" },
+	{ label: "😂 笑える", value: "笑える" },
+	{ label: "😭 泣ける", value: "泣ける" },
+	{ label: "🔍 サスペンス", value: "サスペンス" },
+	{ label: "💕 恋愛", value: "恋愛" },
+	{ label: "⚔️ 冒険", value: "冒険" },
+	{ label: "🍵 日常系", value: "日常系" },
 ];
+
+const GENRE_COLORS: Record<string, string> = {
+	少年漫画: "#F97316",
+	少女漫画: "#EC4899",
+	青年漫画: "#3B82F6",
+	女性漫画: "#A855F7",
+	SF: "#06B6D4",
+	ファンタジー: "#10B981",
+	ホラー: "#6B7280",
+	スポーツ: "#EAB308",
+	ギャグ: "#F59E0B",
+	歴史: "#92400E",
+};
 
 type Recommendation = {
 	title: string;
@@ -41,12 +54,12 @@ export function MangaForm() {
 		setFavorites(favorites.map((f) => (f.id === id ? { ...f, value } : f)));
 	};
 
-	const toggleMood = (mood: string) => {
+	const toggleMood = (value: string) => {
 		setSelectedMoods((prev) =>
-			prev.includes(mood)
-				? prev.filter((m) => m !== mood)
+			prev.includes(value)
+				? prev.filter((m) => m !== value)
 				: prev.length < 3
-					? [...prev, mood]
+					? [...prev, value]
 					: prev,
 		);
 	};
@@ -56,7 +69,7 @@ export function MangaForm() {
 			.map((f) => f.value)
 			.filter((v) => v.trim());
 		if (validFavorites.length === 0) {
-			setError("好きな漫画を1つ以上入力してください");
+			setError("好きな漫画を1つ以上入力してね");
 			return;
 		}
 
@@ -89,23 +102,39 @@ export function MangaForm() {
 		}
 	};
 
+	const getGenreColor = (genre: string) => {
+		for (const [key, color] of Object.entries(GENRE_COLORS)) {
+			if (genre.includes(key)) return color;
+		}
+		return "#F97316";
+	};
+
 	return (
 		<div className="space-y-8">
-			{/* 入力エリア */}
-			<div className="space-y-6">
-				{/* 好きな漫画 */}
+			{/* 入力 */}
+			<div className="space-y-5">
 				<div>
-					<p className="text-sm font-medium mb-2">好きな漫画（1〜3作品）</p>
+					<p className="text-xs font-medium text-muted-foreground mb-2">
+						好きな漫画を教えて（1〜3作品）
+					</p>
 					<div className="space-y-2">
 						{favorites.map((fav, i) => (
 							<input
 								key={fav.id}
 								type="text"
 								value={fav.value}
-								onChange={(e) => handleFavoriteChange(fav.id, e.target.value)}
-								placeholder={`作品名を入力${i === 0 ? "（必須）" : ""}`}
+								onChange={(e) =>
+									handleFavoriteChange(fav.id, e.target.value)
+								}
+								placeholder={
+									i === 0
+										? "例: ワンピース"
+										: i === 1
+											? "例: スラムダンク"
+											: "例: ハイキュー!!"
+								}
 								aria-label={`好きな漫画 ${i + 1}`}
-								className="w-full px-4 py-3 rounded-[var(--radius)] border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
+								className="w-full px-4 py-3 rounded-[var(--radius)] border border-border bg-background text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary text-sm"
 							/>
 						))}
 					</div>
@@ -113,79 +142,83 @@ export function MangaForm() {
 						<button
 							type="button"
 							onClick={handleAddFavorite}
-							className="mt-2 text-xs text-primary hover:underline"
+							className="mt-1.5 text-xs text-primary hover:underline"
 						>
-							+ 作品を追加
+							+ もう1作品追加
 						</button>
 					)}
 				</div>
 
-				{/* 気分タグ */}
 				<div>
-					<p className="text-sm font-medium mb-2">
-						読みたい雰囲気（3つまで選択）
+					<p className="text-xs font-medium text-muted-foreground mb-2">
+						今の気分は？（3つまで）
 					</p>
-					<div className="flex flex-wrap gap-2">
+					<div className="flex flex-wrap gap-1.5">
 						{MOOD_TAGS.map((mood) => (
 							<button
-								key={mood}
+								key={mood.value}
 								type="button"
-								onClick={() => toggleMood(mood)}
-								className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-									selectedMoods.includes(mood)
-										? "bg-primary text-primary-foreground border-primary"
-										: "border-border text-muted-foreground hover:border-primary hover:text-primary"
+								onClick={() => toggleMood(mood.value)}
+								className={`text-xs px-3 py-1.5 rounded-full transition-all ${
+									selectedMoods.includes(mood.value)
+										? "bg-primary text-primary-foreground scale-105 shadow-sm"
+										: "bg-muted text-muted-foreground hover:bg-muted/80"
 								}`}
 							>
-								{mood}
+								{mood.label}
 							</button>
 						))}
 					</div>
 				</div>
 
-				{/* フリーテキスト */}
 				<div>
-					<label htmlFor="free-text" className="block text-sm font-medium mb-2">
-						追加の好み（任意）
+					<label
+						htmlFor="free-text"
+						className="text-xs font-medium text-muted-foreground mb-2 block"
+					>
+						こだわりがあれば（任意）
 					</label>
 					<textarea
 						id="free-text"
 						value={freeText}
 						onChange={(e) => setFreeText(e.target.value)}
-						placeholder="例: 絵がきれいな作品がいい、完結済みの作品がいい"
+						placeholder="完結済み、絵がきれい、10巻以内 など"
 						rows={2}
-						className="w-full px-4 py-3 rounded-[var(--radius)] border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary resize-none"
+						className="w-full px-4 py-3 rounded-[var(--radius)] border border-border bg-background text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary resize-none text-sm"
 					/>
 				</div>
 
-				{/* 送信ボタン */}
 				<button
 					type="button"
 					onClick={handleSubmit}
 					disabled={loading}
-					className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-[var(--radius)] bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+					className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-[var(--radius)] bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
 				>
 					{loading ? (
 						<>
 							<Loader2 className="h-4 w-4 animate-spin" />
-							提案中...
+							探してる...
 						</>
 					) : (
 						<>
 							<Sparkles className="h-4 w-4" />
-							漫画を提案してもらう
+							おすすめを見つける
 						</>
 					)}
 				</button>
 
-				{error && <p className="text-sm text-red-500 text-center">{error}</p>}
+				{error && (
+					<p className="text-xs text-red-500 text-center">{error}</p>
+				)}
 			</div>
 
-			{/* 結果エリア */}
+			{/* 結果 */}
 			{results.length > 0 && (
-				<div className="space-y-4">
-					<div className="flex items-center justify-between">
-						<h2 className="text-lg font-medium">あなたにおすすめの漫画</h2>
+				<div>
+					<div className="flex items-center justify-between mb-4">
+						<p className="text-xs text-muted-foreground">
+							あなたにはこれがハマるかも
+						</p>
 						<button
 							type="button"
 							onClick={handleSubmit}
@@ -193,25 +226,37 @@ export function MangaForm() {
 							className="flex items-center gap-1 text-xs text-primary hover:underline disabled:opacity-50"
 						>
 							<RotateCcw className="h-3 w-3" />
-							もう一度提案
+							別の提案
 						</button>
 					</div>
 					<div className="space-y-3">
 						{results.map((rec) => (
 							<div
 								key={rec.title}
-								className="p-4 rounded-[var(--radius)] border border-border bg-muted/50"
+								className="flex gap-3 p-4 rounded-[var(--radius)] border border-border bg-background"
 							>
-								<div className="flex items-start justify-between gap-2">
-									<h3 className="font-medium">{rec.title}</h3>
-									<span className="text-xs text-muted-foreground whitespace-nowrap">
-										{rec.genre}
-									</span>
+								<div
+									className="w-1 shrink-0 rounded-full"
+									style={{
+										backgroundColor: getGenreColor(rec.genre),
+									}}
+								/>
+								<div className="min-w-0">
+									<div className="flex items-baseline gap-2">
+										<h3 className="font-bold text-base">
+											{rec.title}
+										</h3>
+										<span className="text-[10px] text-muted-foreground shrink-0">
+											{rec.genre}
+										</span>
+									</div>
+									<p className="text-xs text-muted-foreground mt-0.5">
+										{rec.author}
+									</p>
+									<p className="text-sm mt-2 leading-relaxed">
+										{rec.reason}
+									</p>
 								</div>
-								<p className="text-xs text-muted-foreground mt-1">
-									{rec.author}
-								</p>
-								<p className="text-sm mt-2 text-foreground/80">{rec.reason}</p>
 							</div>
 						))}
 					</div>
