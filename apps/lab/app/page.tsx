@@ -82,10 +82,15 @@ export default async function Home() {
 					</p>
 					{apps.length > 0 ? (
 						<div className="space-y-6">
-							{apps.map((app, idx) => {
-								const Tag = app.comingSoon ? "div" : "a";
-								return (
-									<Tag
+							{(() => {
+								let comingSoonCount = 0;
+								return apps.map((app, idx) => {
+									if (app.comingSoon) comingSoonCount++;
+									// Coming Soonが3個を超えたら非表示（コード上は残す）
+									if (app.comingSoon && comingSoonCount > 3) return null;
+									const Tag = app.comingSoon ? "div" : "a";
+									return (
+										<Tag
 										key={app.name}
 										{...(app.comingSoon ? {} : { href: app.url })}
 										className={`block p-6 md:p-8 rounded-[var(--radius)] border border-border bg-[#1A2640]/90 backdrop-blur-sm transition-colors relative ${
@@ -123,7 +128,8 @@ export default async function Home() {
 										</ul>
 									</Tag>
 								);
-							})}
+							});
+						})()}
 						</div>
 					) : (
 						<p className="text-center text-muted-foreground text-sm">
