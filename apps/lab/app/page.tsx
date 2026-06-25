@@ -94,9 +94,6 @@ export default async function Home() {
 												: "hover:border-primary/50"
 										}`}
 									>
-										<span className="text-xl md:text-2xl font-bold text-primary/60 absolute top-4 left-4 md:top-6 md:left-6">
-											#{idx + 1}
-										</span>
 										{app.comingSoon && (
 											<span className="absolute top-4 right-4 md:top-6 md:right-6 text-[10px] tracking-wider uppercase text-amber-400 border border-amber-400/30 rounded-full px-2 py-0.5">
 												Coming Soon
@@ -108,6 +105,7 @@ export default async function Home() {
 											</span>
 										)}
 										<h3 className="text-xl md:text-2xl font-bold text-white">
+											<span className="text-white/50 mr-2">#{idx + 1}</span>
 											{app.name}
 										</h3>
 										<p className="mt-2 text-sm md:text-base text-muted-foreground">
