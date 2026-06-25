@@ -17,3 +17,4 @@
 | 1 | 漫画提案AI | https://manga-ai.southerncrosslab.com | app-001 | Coming Soon |
 | 2 | 副業バレリスク診断 | https://fukugyo-check.southerncrosslab.com | app-002 | Coming Soon |
 | 3 | FilmPick | https://filmpick.southerncrosslab.com | app-003 | Coming Soon |
+| 4 | BucketAI | https://bucketai.southerncrosslab.com | app-004 | Coming Soon |

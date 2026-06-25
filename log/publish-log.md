@@ -8,3 +8,4 @@
 | -- | ---- | ------- | --- | ---------- |
 | 002 | 2026-06-24 | 副業バレリスク診断 | https://fukugyo-check.southerncrosslab.com | Coming Soon（ポータルに掲載済み・リンク無効） |
 | 003 | 2026-06-25 | FilmPick | https://filmpick.southerncrosslab.com | 映画レコメンドAI。Claude API + Amazonアフィリエイト |
+| 004 | 2026-06-25 | BucketAI | https://bucketai.southerncrosslab.com | バケットリスト生成AI。3問→10個生成 |

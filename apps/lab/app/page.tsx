@@ -31,6 +31,13 @@ const apps: {
 		url: "https://filmpick.southerncrosslab.com",
 		comingSoon: true,
 	},
+	{
+		name: "BucketAI",
+		description: "3つの質問に答えるだけ。AIがあなただけの「やりたいことリスト」を作る",
+		features: ["AI対話でリスト生成", "10個のバケットリスト", "SNSシェア"],
+		url: "https://bucketai.southerncrosslab.com",
+		comingSoon: true,
+	},
 ];
 
 export default async function Home() {
