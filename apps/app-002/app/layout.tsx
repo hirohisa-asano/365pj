@@ -1,7 +1,9 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Noto_Sans_JP } from "next/font/google";
+import { AuthHeader } from "@/components/auth-header";
 import { Footer } from "@/components/footer";
+import { createClient } from "@/lib/supabase/server";
 import { tone } from "@/tone.config";
 import "./globals.css";
 
@@ -16,11 +18,27 @@ export const metadata: Metadata = {
 		"副業が会社にバレるリスクを無料で診断。住民税・社会保険・SNSなどのバレるルートと対策がわかる。",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const supabase = await createClient();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	let isMember = false;
+	if (user) {
+		const { data } = await supabase
+			.from("memberships")
+			.select("status")
+			.eq("user_id", user.id)
+			.eq("status", "active")
+			.single();
+		isMember = !!data;
+	}
+
 	const cssVars = {
 		"--tone-primary": tone.colors.primary,
 		"--tone-primary-foreground": tone.colors.primaryForeground,
@@ -37,6 +55,9 @@ export default function RootLayout({
 	return (
 		<html lang="ja" className={`${notoSansJP.variable} h-full`}>
 			<body className="min-h-full flex flex-col antialiased" style={cssVars}>
+				<header className="absolute top-4 right-4 z-10">
+					<AuthHeader user={user} isMember={isMember} />
+				</header>
 				<main className="flex-1">{children}</main>
 				<Footer />
 				<Analytics />
