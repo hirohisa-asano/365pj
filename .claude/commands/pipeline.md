@@ -73,9 +73,9 @@ Phase 5: マーケティング
 
 **ゲート: ≥ 20/30。不合格なら修正→再スコアリング。**
 
-#### 認証・DB不要の場合の処理
-- 認証不要 → `middleware.ts`, `lib/supabase/` を削除
-- DB不要 → `lib/supabase/` 削除 + package.json から Supabase 依存を削除
+#### 認証・DB の扱い
+- **認証は全アプリ共通で残す**（AuthHeader, lib/supabase/, middleware.ts, auth/callback は削除しない）
+- DB不要 → アプリ固有のマイグレーションは作成しない（Supabase自体は認証で使用）
 
 #### 使えるサービス（ティア制）
 `.claude/approved-services.md` を参照。

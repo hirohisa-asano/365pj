@@ -41,7 +41,8 @@
 - フッターに寄付リンク（Stripe）+ ポータルリンクを設置
 - OGP は `opengraph-image.tsx` で自動生成
 - Supabase スキーマは `app_NNN` で分割
-- 認証不要のアプリでは Auth 関連コードを削除
+- **認証（AuthHeader）は全アプリ共通**。削除しない。DB不要のアプリでもSupabase Auth + memberships チェックは残す
+- DB不要のアプリでは Supabase マイグレーションのみ省略
 - ブランチ戦略は main 直接
 - ドメインは `{サービス名}.southerncrosslab.com`
 

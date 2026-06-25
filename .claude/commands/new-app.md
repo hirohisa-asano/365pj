@@ -201,13 +201,9 @@ cp -r apps/template apps/app-{NNN}
    - タイトルの `app-NNN` と `{アプリ名}` を実際の値に置換
    - フェーズ1のスコアを記入
 
-7. **認証不要の場合**: SPEC.md で認証不要と判定した場合、以下を削除:
-   - `apps/app-{NNN}/middleware.ts`
-   - `apps/app-{NNN}/lib/supabase/` ディレクトリ
+7. **認証は全アプリ共通で残す**: `lib/supabase/`、`middleware.ts`、`app/auth/callback/`、`components/auth-header.tsx` は削除しない。全アプリで統一されたログインUIを提供する
 
-8. **DB不要の場合**: SPEC.md で DB 不要と判定した場合、以下も削除:
-   - `apps/app-{NNN}/lib/supabase/` ディレクトリ（認証とセット）
-   - `package.json` から `@supabase/ssr`, `@supabase/supabase-js` を削除
+8. **DB不要の場合**: アプリ固有のDBテーブル・マイグレーションは作成しない（Supabase自体は認証で使用するため `@supabase/ssr` は残す）
 
 ## 出力ファイル
 
