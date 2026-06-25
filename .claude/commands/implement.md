@@ -54,6 +54,21 @@ SPEC.md の全要件を読み、以下を生成:
 - **エラーハンドリング**: ユーザー入力・外部API境界のみ。内部コードは信頼する
 - **状態管理**: React の useState/useReducer で十分。外部ライブラリ不要
 - **レスポンシブ**: モバイルファースト。Tailwind のブレークポイントを使う
+- **Claude API モデル**: `claude-haiku-4-5-20251001` を使う（CLAUDE.md 参照）
+
+### プラン設計の実装
+
+SPEC.md の「プラン設計」に従い、minimum / medium / normal の機能制限を実装する。
+
+- **回数制限の実装**: API Route で以下をチェック
+  - minimum: `localStorage` のカウント（クライアント側。リセットは1日ごと）
+  - medium: Supabase の `usage` テーブルでカウント
+  - normal: 制限なし（`memberships` テーブルの `status = 'active'` を確認）
+- **機能制限の実装**: レスポンスの内容を分岐
+  - minimum: 基本結果のみ返す
+  - medium: 詳細結果を含む
+  - normal: 全情報を返す
+- **認証不要アプリ（minimum only）の場合**: プラン制御コードは不要
 
 ### デザイン規約（AIっぽいデザインを避ける）
 
