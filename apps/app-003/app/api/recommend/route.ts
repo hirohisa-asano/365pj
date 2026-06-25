@@ -21,6 +21,11 @@ export async function POST(request: NextRequest) {
 	}
 
 	const { movies, moods } = body as { movies: unknown[]; moods: unknown[] };
+	const excludeTitles = Array.isArray((body as Record<string, unknown>).excludeTitles)
+		? ((body as Record<string, unknown>).excludeTitles as unknown[])
+				.filter((t): t is string => typeof t === "string")
+				.slice(0, 30)
+		: [];
 
 	// 型・長さの検証（過大入力によるコスト攻撃を防止）
 	const MAX_MOVIE_LENGTH = 100;
@@ -67,7 +72,7 @@ export async function POST(request: NextRequest) {
 
 注意:
 - 必ず3本提案する
-- ユーザーが挙げた映画と同じ映画は推薦しない
+- ユーザーが挙げた映画と同じ映画は推薦しない${excludeTitles.length > 0 ? `\n- 以下の映画も除外すること（前回提案済み）: ${excludeTitles.join("、")}` : ""}
 - 有名作だけでなく、知る人ぞ知る良作も混ぜる
 - reasonは「あなたが○○を好きなら」のように、好みとの繋がりを具体的に説明する
 - JSONのみ出力。前後に説明文を付けない`;

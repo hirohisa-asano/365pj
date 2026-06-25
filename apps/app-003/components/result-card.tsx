@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, Clapperboard, ExternalLink, Tag, User } from "lucide-react";
+import { BookOpen, Calendar, Clapperboard, ExternalLink, Tag, User } from "lucide-react";
 
 type Recommendation = {
 	title: string;
@@ -28,9 +28,14 @@ export function ResultCard({
 			className={`bg-gradient-to-br ${gradients[index % 3]} border border-border rounded-xl p-5 md:p-6`}
 		>
 			<div className="flex items-start justify-between gap-3 mb-3">
-				<h3 className="text-xl md:text-2xl font-black text-foreground leading-tight">
+				<a
+					href={`https://ja.wikipedia.org/wiki/${encodeURIComponent(movie.title)}`}
+					target="_blank"
+					rel="noopener noreferrer"
+					className="text-xl md:text-2xl font-black text-foreground leading-tight hover:text-primary transition-colors"
+				>
 					{movie.title}
-				</h3>
+				</a>
 				<span className="shrink-0 w-8 h-8 rounded-full bg-primary/15 text-primary text-sm font-bold flex items-center justify-center">
 					{index + 1}
 				</span>
@@ -58,15 +63,26 @@ export function ResultCard({
 				</p>
 			</div>
 
-			<a
-				href={`https://www.amazon.co.jp/s?k=${encodeURIComponent(movie.title + " DVD")}&i=dvd&tag=southerncro08-22`}
-				target="_blank"
-				rel="noopener noreferrer"
-				className="inline-flex items-center gap-1.5 text-sm text-primary/80 hover:text-primary transition-colors"
-			>
-				<ExternalLink size={14} />
-				Amazonで探す
-			</a>
+			<div className="flex flex-wrap gap-x-4 gap-y-2">
+				<a
+					href={`https://ja.wikipedia.org/wiki/${encodeURIComponent(movie.title)}`}
+					target="_blank"
+					rel="noopener noreferrer"
+					className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+				>
+					<BookOpen size={14} />
+					Wikipedia
+				</a>
+				<a
+					href={`https://www.amazon.co.jp/s?k=${encodeURIComponent(movie.title + " DVD")}&i=dvd&tag=southerncro08-22`}
+					target="_blank"
+					rel="noopener noreferrer"
+					className="inline-flex items-center gap-1.5 text-sm text-primary/80 hover:text-primary transition-colors"
+				>
+					<ExternalLink size={14} />
+					Amazonで探す
+				</a>
+			</div>
 		</div>
 	);
 }

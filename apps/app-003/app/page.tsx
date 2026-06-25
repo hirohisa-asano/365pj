@@ -1,11 +1,12 @@
 "use client";
 
-import { RotateCcw, Search, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { RefreshCw, RotateCcw, Search, Sparkles, Zap } from "lucide-react";
+import { useEffect, useState } from "react";
 import { MoodChips } from "@/components/mood-chips";
 import { FadeIn, PressScale, Stagger, StaggerItem } from "@/components/motion";
 import { MovieInput } from "@/components/movie-input";
 import { ResultCard } from "@/components/result-card";
+import { ShareButton } from "@/components/share-button";
 
 type Recommendation = {
 	title: string;
@@ -20,16 +21,27 @@ type Result = {
 	recommendations: Recommendation[];
 };
 
+const SAMPLE_MOVIES = ["千と千尋の神隠し", "インターステラー", ""];
+
 export default function Home() {
 	const [movies, setMovies] = useState(["", "", ""]);
 	const [moods, setMoods] = useState<string[]>([]);
 	const [result, setResult] = useState<Result | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
+	const [previousTitles, setPreviousTitles] = useState<string[]>([]);
+	const [loadingMsg, setLoadingMsg] = useState(0);
+
+	useEffect(() => {
+		if (!loading) return;
+		setLoadingMsg(0);
+		const timer = setTimeout(() => setLoadingMsg(1), 2000);
+		return () => clearTimeout(timer);
+	}, [loading]);
 
 	const canSubmit = movies.some((m) => m.trim() !== "") && !loading;
 
-	const handleSubmit = async () => {
+	const handleSubmit = async (excludeTitles: string[] = []) => {
 		setLoading(true);
 		setError("");
 		setResult(null);
@@ -38,7 +50,7 @@ export default function Home() {
 			const res = await fetch("/api/recommend", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ movies, moods }),
+				body: JSON.stringify({ movies, moods, excludeTitles }),
 			});
 
 			if (!res.ok) {
@@ -48,6 +60,10 @@ export default function Home() {
 
 			const data = await res.json();
 			setResult(data);
+			setPreviousTitles((prev) => [
+				...prev,
+				...data.recommendations.map((r: Recommendation) => r.title),
+			]);
 		} catch (e) {
 			setError(e instanceof Error ? e.message : "エラーが発生しました");
 		} finally {
@@ -55,11 +71,20 @@ export default function Home() {
 		}
 	};
 
+	const handleMoreLikeThis = () => {
+		handleSubmit(previousTitles);
+	};
+
 	const handleReset = () => {
 		setMovies(["", "", ""]);
 		setMoods([]);
 		setResult(null);
 		setError("");
+		setPreviousTitles([]);
+	};
+
+	const handleSample = () => {
+		setMovies([...SAMPLE_MOVIES]);
 	};
 
 	return (
@@ -86,19 +111,34 @@ export default function Home() {
 									好きな映画
 								</h2>
 								<MovieInput movies={movies} onChange={setMovies} />
+								{movies.every((m) => m === "") && (
+									<button
+										type="button"
+										onClick={handleSample}
+										className="mt-2 text-xs text-primary/70 hover:text-primary transition-colors flex items-center gap-1 cursor-pointer"
+									>
+										<Zap size={12} />
+										迷ったらこれで試す
+									</button>
+								)}
 							</section>
 
 							<section>
-								<h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3">
-									今の気分
-								</h2>
+								<div className="flex items-baseline gap-2 mb-3">
+									<h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+										今の気分
+									</h2>
+									<span className="text-xs text-muted-foreground/60">
+										選ぶとより精度アップ
+									</span>
+								</div>
 								<MoodChips selected={moods} onChange={setMoods} />
 							</section>
 
 							<PressScale>
 								<button
 									type="button"
-									onClick={handleSubmit}
+									onClick={() => handleSubmit()}
 									disabled={!canSubmit}
 									className="w-full py-3.5 bg-primary text-primary-foreground font-bold rounded-lg flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer hover:brightness-110"
 								>
@@ -115,7 +155,9 @@ export default function Home() {
 						<div className="inline-flex items-center gap-3 text-primary">
 							<Sparkles size={22} className="animate-pulse-slow" />
 							<span className="text-lg font-bold animate-pulse-slow">
-								あなたの好みを分析中...
+								{loadingMsg === 0
+									? "あなたの好みを分析中..."
+									: "最適な映画を探しています..."}
 							</span>
 						</div>
 					</FadeIn>
@@ -154,14 +196,26 @@ export default function Home() {
 						</div>
 
 						<FadeIn delay={0.5}>
-							<button
-								type="button"
-								onClick={handleReset}
-								className="w-full py-3 border border-border text-muted-foreground rounded-lg flex items-center justify-center gap-2 transition-all duration-200 hover:text-foreground hover:border-primary/50 cursor-pointer"
-							>
-								<RotateCcw size={16} />
-								もう一度探す
-							</button>
+							<ShareButton recommendations={result.recommendations} />
+
+							<div className="grid grid-cols-2 gap-3 mt-3">
+								<button
+									type="button"
+									onClick={handleMoreLikeThis}
+									className="py-3 border border-primary/30 text-primary rounded-lg flex items-center justify-center gap-2 transition-all duration-200 hover:bg-primary/10 cursor-pointer text-sm font-medium"
+								>
+									<RefreshCw size={15} />
+									この方向でもっと
+								</button>
+								<button
+									type="button"
+									onClick={handleReset}
+									className="py-3 border border-border text-muted-foreground rounded-lg flex items-center justify-center gap-2 transition-all duration-200 hover:text-foreground hover:border-primary/50 cursor-pointer text-sm"
+								>
+									<RotateCcw size={15} />
+									最初からやり直す
+								</button>
+							</div>
 						</FadeIn>
 					</div>
 				)}
