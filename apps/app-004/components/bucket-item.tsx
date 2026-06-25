@@ -21,11 +21,11 @@ export function BucketItem({
 					: "border-border bg-muted/50"
 			}`}
 		>
-			<div className="flex-shrink-0 flex flex-col items-center gap-1">
-				<span className="text-xs text-muted-foreground font-mono">
-					#{String(index + 1).padStart(2, "0")}
+			<div className="flex-shrink-0 flex flex-col items-center w-12">
+				<span className="text-2xl font-black text-primary/25 leading-none">
+					{String(index + 1).padStart(2, "0")}
 				</span>
-				<span className="text-2xl">{emoji}</span>
+				<span className="text-xl mt-1">{emoji}</span>
 			</div>
 			<div className="flex-1 min-w-0">
 				<h3 className="font-bold text-foreground leading-snug">{title}</h3>

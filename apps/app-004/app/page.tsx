@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, LogIn, RotateCcw, Sparkles } from "lucide-react";
+import { ArrowRight, ClipboardCopy, LogIn, RotateCcw, Sparkles, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { BucketItem } from "@/components/bucket-item";
 import { FadeIn, PressScale, Stagger, StaggerItem } from "@/components/motion";
@@ -139,6 +139,21 @@ export default function Home() {
 		setError("");
 	};
 
+	const handleSample = () => {
+		setAnswers([
+			"好きな人と世界中を旅する",
+			"友達と朝まで語り合った夜",
+			"もっと挑戦すればよかった",
+		]);
+	};
+
+	const handleCopyList = () => {
+		const text = visibleItems
+			.map((item, i) => `${i + 1}. ${item.emoji} ${item.title}`)
+			.join("\n");
+		navigator.clipboard.writeText(text);
+	};
+
 	const updateAnswer = (value: string) => {
 		const next = [...answers];
 		next[step] = value;
@@ -189,12 +204,27 @@ export default function Home() {
 								))}
 							</div>
 
-							<QuestionStep
-								question={QUESTIONS[step].question}
-								value={currentAnswer}
-								onChange={updateAnswer}
-								placeholder={QUESTIONS[step].placeholder}
-							/>
+							<p className="text-sm text-muted-foreground">
+									Q{step + 1} / {QUESTIONS.length}
+								</p>
+
+								<QuestionStep
+									question={QUESTIONS[step].question}
+									value={currentAnswer}
+									onChange={updateAnswer}
+									placeholder={QUESTIONS[step].placeholder}
+								/>
+
+								{step === 0 && answers.every((a) => a === "") && (
+									<button
+										type="button"
+										onClick={handleSample}
+										className="text-xs text-primary/70 hover:text-primary transition-colors flex items-center gap-1 cursor-pointer"
+									>
+										<Zap size={12} />
+										迷ったらこれで試す
+									</button>
+								)}
 
 							<PressScale>
 								{step < 2 ? (
@@ -298,6 +328,14 @@ export default function Home() {
 						<FadeIn delay={0.6}>
 							<div className="space-y-3 mt-6">
 								<ShareButton items={visibleItems} />
+								<button
+									type="button"
+									onClick={handleCopyList}
+									className="w-full py-3 bg-muted border border-border text-foreground rounded-lg flex items-center justify-center gap-2 transition-all duration-200 hover:border-primary/50 cursor-pointer text-sm"
+								>
+									<ClipboardCopy size={15} />
+									リストをコピー
+								</button>
 								<button
 									type="button"
 									onClick={handleReset}
