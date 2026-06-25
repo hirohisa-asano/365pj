@@ -1,5 +1,6 @@
 export function Footer() {
 	const discordUrl = process.env.NEXT_PUBLIC_DISCORD_INVITE_URL;
+	const stripeLink = process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK;
 
 	return (
 		<footer className="border-t border-border py-8 px-4">
@@ -32,9 +33,20 @@ export function Footer() {
 								</li>
 							)}
 							<li>
-								<span className="text-muted-foreground/30">
-									メンバーになる（準備中）
-								</span>
+								{stripeLink ? (
+									<a
+										href={stripeLink}
+										target="_blank"
+										rel="noopener noreferrer"
+										className="text-muted-foreground/50 hover:text-foreground transition-colors"
+									>
+										メンバーになる
+									</a>
+								) : (
+									<span className="text-muted-foreground/30">
+										メンバーになる（準備中）
+									</span>
+								)}
 							</li>
 							<li>
 								<a

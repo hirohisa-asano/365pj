@@ -90,16 +90,22 @@ vercel --prod
 
 ### ステップ7: ポータル更新
 
-`apps/lab/app/page.tsx` の `apps` 配列にエントリを追加してください:
+`apps/lab/app/page.tsx` の `apps` 配列にエントリを追加してください。
+
+**重要ルール:**
+- **`comingSoon: true` をデフォルトで付ける**（公開は `/marketing` フェーズで行う）
+- **apps 配列は作成順（app-001 → app-002 → ...）に並べる**
+- SPEC.md から名前・説明・features を取得
 
 ```typescript
-const apps: { name: string; description: string; url: string }[] = [
-  // 既存のエントリ...
-  { name: "{アプリ名}", description: "{一言説明}", url: "https://{サブドメイン名}.southerncrosslab.com" },
-];
+{
+  name: "{アプリ名}",
+  description: "{一言説明}",
+  features: ["{特徴1}", "{特徴2}", "{特徴3}"],
+  url: "https://{サブドメイン名}.southerncrosslab.com",
+  comingSoon: true,  // ← デフォルト。/marketing で isNew: true に切り替える
+},
 ```
-
-アプリ名と説明は SPEC.md から取得してください。
 
 ポータルも再デプロイ:
 ```bash

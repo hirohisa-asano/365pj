@@ -12,6 +12,23 @@
 
 ## 手順
 
+### ラウンド0: ポータル公開
+
+ポータル (`apps/lab/app/page.tsx`) の該当アプリを `comingSoon: true` → `isNew: true` に変更し、再デプロイ。
+
+```typescript
+// Before
+{ name: "{アプリ名}", ..., comingSoon: true },
+// After
+{ name: "{アプリ名}", ..., isNew: true },
+```
+
+```bash
+cd apps/lab && vercel --prod
+```
+
+**これにより、ポータル上でアプリが「Coming Soon」から公開状態に切り替わる。**
+
 ### ラウンド1: 素材収集・ドラフト生成
 
 以下を読んでください:
