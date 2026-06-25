@@ -18,3 +18,26 @@ body {
 	color: var(--color-foreground);
 	font-family: var(--font-body);
 }
+
+/* --- スケルトン/ローディング --- */
+@keyframes shimmer {
+	0% { background-position: -200% 0; }
+	100% { background-position: 200% 0; }
+}
+
+.skeleton {
+	background: linear-gradient(90deg, var(--color-muted) 25%, transparent 50%, var(--color-muted) 75%);
+	background-size: 200% 100%;
+	animation: shimmer 1.5s infinite;
+	border-radius: var(--radius);
+}
+
+/* --- パルス（診断中...の演出） --- */
+@keyframes pulse-slow {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.5; }
+}
+
+.animate-pulse-slow {
+	animation: pulse-slow 2s ease-in-out infinite;
+}

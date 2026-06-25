@@ -110,6 +110,14 @@ npx playwright screenshot --browser chromium --full-page {URL} /tmp/ref-3.png
 - {特徴2}
 - {特徴3}
 
+### モーション計画
+{`components/motion.tsx` の共通コンポーネントからどれを使うか:}
+- ページ読み込み: {FadeIn / FadeInView / なし}
+- 結果表示: {ScoreReveal + CountUp / Stagger / なし}
+- 操作フィードバック: {PressScale / ホバー / なし}
+- ローディング: {skeleton / pulse-slow / カスタム}
+- その他: {アプリ固有の演出があれば}
+
 ## スコープ外
 - {やらないこと}
 
