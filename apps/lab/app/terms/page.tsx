@@ -14,7 +14,7 @@ export default function TermsPage() {
 			>
 				← Southern Cross Lab
 			</a>
-			<h1 className="font-heading text-2xl font-semibold mb-2">利用規約</h1>
+			<h1 className="font-heading text-2xl font-semibold mb-2 text-white">利用規約</h1>
 			<p className="text-xs text-muted-foreground mb-8">
 				最終更新日: 2026年6月24日
 			</p>

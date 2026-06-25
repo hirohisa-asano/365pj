@@ -115,7 +115,15 @@ cd apps/lab
 vercel --prod
 ```
 
-### ステップ8: 公開ログ更新
+### ステップ8: アプリリンク集更新
+
+`todo/app-links.md` のテーブルに行を追加:
+
+```
+| {番号} | {アプリ名} | https://{サブドメイン名}.southerncrosslab.com | {Vercelプロジェクト名} | Coming Soon |
+```
+
+### ステップ9: 公開ログ更新
 
 `log/publish-log.md` のテーブルに行を追加:
 
@@ -123,7 +131,7 @@ vercel --prod
 | {番号} | {今日の日付} | {アプリ名} | https://{サブドメイン名}.southerncrosslab.com | |
 ```
 
-### ステップ9: Discord 通知
+### ステップ10: Discord 通知
 
 `.env` または `.env.local` に `DISCORD_WEBHOOK_URL` がある場合、Webhook で通知:
 
@@ -135,7 +143,7 @@ curl -H "Content-Type: application/json" \
 
 Webhook URL がない場合はスキップし、「Discord Webhook 未設定」と報告してください。
 
-### ステップ10: Git コミット
+### ステップ11: Git コミット
 
 ポータル更新と公開ログ更新をコミット:
 

@@ -14,7 +14,7 @@ export default function LegalPage() {
 			>
 				← Southern Cross Lab
 			</a>
-			<h1 className="font-heading text-2xl font-semibold mb-2">
+			<h1 className="font-heading text-2xl font-semibold mb-2 text-white">
 				特定商取引法に基づく表記
 			</h1>
 			<p className="text-xs text-muted-foreground mb-8">
