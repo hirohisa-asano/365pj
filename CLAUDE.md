@@ -52,7 +52,14 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 NEXT_PUBLIC_STRIPE_PAYMENT_LINK=
+ANTHROPIC_API_KEY=
 ```
+
+### 環境変数の共有ルール
+
+- **マスター `.env.local`** は `apps/lab/.env.local` に集約
+- 新規アプリ作成時、`apps/lab/.env.local` から必要なキーをコピーする
+- `ANTHROPIC_API_KEY` は `apps/lab/.env.local` に保管済み。Claude API を使うアプリはここからコピーすること
 
 ## コマンド
 
