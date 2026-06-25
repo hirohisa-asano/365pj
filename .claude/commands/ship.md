@@ -97,9 +97,11 @@ vercel --prod
 - **apps 配列は作成順（app-001 → app-002 → ...）に並べる**
 - SPEC.md から名前・説明・features を取得
 
+**ナンバリング**: `apps` 配列の既存エントリ数 + 1 で `#{番号}` を付ける（365個チャレンジの進捗管理用）
+
 ```typescript
 {
-  name: "{アプリ名}",
+  name: "#{番号} {アプリ名}",
   description: "{一言説明}",
   features: ["{特徴1}", "{特徴2}", "{特徴3}"],
   url: "https://{サブドメイン名}.southerncrosslab.com",

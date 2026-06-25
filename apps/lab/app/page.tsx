@@ -11,21 +11,21 @@ const apps: {
 	comingSoon?: boolean;
 }[] = [
 	{
-		name: "漫画提案AI",
+		name: "#1 漫画提案AI",
 		description: "好きな作品と気分から、AIがぴったりの漫画を見つける",
 		features: ["好みの漫画から提案", "気分タグで絞り込み", "Amazonで即チェック"],
 		url: "https://manga-ai.southerncrosslab.com",
 		comingSoon: true,
 	},
 	{
-		name: "副業バレリスク診断",
+		name: "#2 副業バレリスク診断",
 		description: "副業が会社にバレるリスクを3つの質問で診断。対策もわかる",
 		features: ["バレリスク0-100%", "バレるルート分析", "対策チェックリスト"],
 		url: "https://fukugyo-check.southerncrosslab.com",
 		comingSoon: true,
 	},
 	{
-		name: "FilmPick",
+		name: "#3 FilmPick",
 		description: "好きな映画と気分からAIがあなたの趣味を分析、次に観るべき映画を提案",
 		features: ["趣味傾向の分析", "おすすめ3本+理由", "Amazon・Wikipedia連携"],
 		url: "https://filmpick.southerncrosslab.com",
