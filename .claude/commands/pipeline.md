@@ -71,9 +71,12 @@ Phase 5: マーケティング
 - 認証不要 → `middleware.ts`, `lib/supabase/` を削除
 - DB不要 → `lib/supabase/` 削除 + package.json から Supabase 依存を削除
 
-#### 使える API ルール
-- **OK**: Claude API, Supabase, 公開API/RSS
-- **NG**: 新規APIキーが必要なサービス → Claude の知識で代替
+#### 使えるサービス（ティア制）
+`.claude/approved-services.md` を参照。
+- **Tier 0**: ブラウザAPI（Geolocation, Camera等）→ 自由に使用可
+- **Tier 1**: Supabase / Claude API / Vercel → 自由に使用可
+- **Tier 2**: 承認済み外部サービス（Leaflet, Mapbox, OpenWeatherMap等）→ SPECに記載すれば使用可
+- **Tier 3**: リストにないサービス → 人間に確認を求める
 
 ---
 

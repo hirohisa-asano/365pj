@@ -15,6 +15,8 @@
 - Supabase (@supabase/ssr) + Supabase Auth (Google 認証のみ)
 - Supabase CLI (マイグレーション管理)
 - Stripe Payment Links (寄付)
+- Motion (アニメーション)
+- 外部サービス: `.claude/approved-services.md` の Tier 0-2 を使用可能
 
 ## リポジトリ構成
 

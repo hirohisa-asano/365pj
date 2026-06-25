@@ -72,7 +72,11 @@ npx playwright screenshot --browser chromium --full-page {URL} /tmp/ref-3.png
 - レンダリング: SSG / SSR（理由）
 - DB: 使用する / 使用しない
 - 認証: 必要 / 不要
-- 外部API: {使用するAPI。Claude API, Supabase, 公開APIのみ}
+- 外部API: {使用するAPI。`.claude/approved-services.md` の Tier 0-2 から選定}
+- 使用サービス（Tier別）:
+  - Tier 0: {ブラウザAPI — Geolocation, Camera 等}
+  - Tier 1: {Supabase, Claude API 等}
+  - Tier 2: {Leaflet, Mapbox, OpenWeatherMap 等。環境変数の確認を記載}
 - Supabase スキーマ: `app_{NNN}`（DB使用時）
 
 ## テーブル設計（DB使用時）
@@ -134,7 +138,7 @@ npx playwright screenshot --browser chromium --full-page {URL} /tmp/ref-3.png
 | **課題の明確さ** | 誰の何の課題か曖昧 | おおむね明確 | ペルソナ・課題・理想が具体的 |
 | **スコープの適切さ** | 3日では無理 or 小さすぎ | ギリギリ3日 | 3日で作れて価値がある |
 | **画面設計の具体性** | 「いい感じに」レベル | 画面数は明確 | 画面数・要素・遷移が明確 |
-| **技術的実現性** | 未知の技術・API契約必要 | 一部不確実 | 既存スタックで完結 |
+| **技術的実現性** | Tier 3サービスが必要 | Tier 2サービスを使う | Tier 0-1で完結 |
 | **差別化** | ChatGPTで十分 | やや差別化 | 専用UXで明確に勝てる |
 | **収益化導線** | 寄付しか手段なし | 有料版の余地あり | 有料版・B2B展開が見える |
 
