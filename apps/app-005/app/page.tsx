@@ -13,6 +13,7 @@ import { getPersona } from "@/lib/personas";
 
 const RATE_KEY = "yoshiyoshi_usage";
 const LOG_KEY = "yoshiyoshi_log";
+const NICK_KEY = "yoshiyoshi_nickname";
 const FREE_LIMIT = 3;
 
 type CrisisData = {
@@ -55,8 +56,9 @@ function bumpUsage(): void {
 
 export default function Home() {
 	const [moodId, setMoodId] = useState("normal");
-	const [personaId, setPersonaId] = useState("friend");
+	const [personaId, setPersonaId] = useState("oshi");
 	const [toneLevel, setToneLevel] = useState(2);
+	const [nickname, setNickname] = useState("");
 	const [custom, setCustom] = useState("");
 	const [text, setText] = useState("");
 	const [message, setMessage] = useState("");
@@ -84,6 +86,8 @@ export default function Home() {
 		try {
 			const raw = localStorage.getItem(LOG_KEY);
 			if (raw) setLog(JSON.parse(raw));
+			const savedNick = localStorage.getItem(NICK_KEY);
+			if (savedNick) setNickname(savedNick);
 		} catch {
 			// ignore
 		}
@@ -104,6 +108,11 @@ export default function Home() {
 		setError("");
 		setMessage("");
 		setCrisis(null);
+		try {
+			localStorage.setItem(NICK_KEY, nickname);
+		} catch {
+			// ignore
+		}
 
 		try {
 			const res = await fetch("/api/cheer", {
@@ -114,6 +123,7 @@ export default function Home() {
 					personaId,
 					toneLevel,
 					moodId,
+					nickname,
 					custom: isMember ? custom : "",
 				}),
 			});
@@ -193,6 +203,21 @@ export default function Home() {
 								onSelect={setPersonaId}
 								canUsePremium={isLoggedIn}
 							/>
+
+							<div className="space-y-1.5">
+								<p className="text-sm font-bold text-muted-foreground">
+									ニックネーム（呼んでほしい名前・任意）
+								</p>
+								<input
+									type="text"
+									value={nickname}
+									onChange={(e) => setNickname(e.target.value)}
+									placeholder="例: ゆう、ゆうくん、社長"
+									maxLength={20}
+									className="w-full rounded-2xl border border-border bg-white px-4 py-2.5 text-sm outline-none focus:border-primary"
+								/>
+							</div>
+
 							<ToneSlider
 								level={toneLevel}
 								onChange={setToneLevel}
@@ -202,7 +227,7 @@ export default function Home() {
 							{isMember && (
 								<div className="space-y-1.5">
 									<p className="text-sm font-bold text-muted-foreground">
-										カスタム（呼び名・口調の希望）
+										口調の希望（サポーター向け）
 									</p>
 									<input
 										type="text"
