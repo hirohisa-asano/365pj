@@ -1,7 +1,7 @@
 "use client";
 
 import { Lock } from "lucide-react";
-import { CUSTOM_PERSONA, PERSONAS } from "@/lib/personas";
+import { PERSONAS } from "@/lib/personas";
 
 export function PersonaPicker({
 	selected,
@@ -12,15 +12,13 @@ export function PersonaPicker({
 	onSelect: (id: string) => void;
 	canUsePremium: boolean;
 }) {
-	// カスタム推しはログインで解放（プリセット premium と同じゲート）
-	const options = [...PERSONAS, CUSTOM_PERSONA];
 	return (
 		<div className="space-y-2">
 			<p className="text-sm font-bold text-muted-foreground">
 				誰に応援してほしい？
 			</p>
 			<div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
-				{options.map((p) => {
+				{PERSONAS.map((p) => {
 					const locked = p.premium && !canUsePremium;
 					const active = selected === p.id;
 					return (

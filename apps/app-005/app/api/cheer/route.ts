@@ -14,6 +14,17 @@ const MAX_NICKNAME_LENGTH = 20;
 // カスタム推しのプロンプト上限（プラン別）
 const CUSTOM_PERSONA_MAX_MEDIUM = 120;
 const CUSTOM_PERSONA_MAX_NORMAL = 500;
+// AIコスト保護: ログインユーザーの1日あたり回数制限（サーバー側集計）
+const APP_ID = "app-005";
+const DAILY_LIMIT_LOGGED_IN = 10;
+const DAILY_LIMIT_MEMBER = 50;
+
+// JSTの今日の日付（YYYY-MM-DD）
+function todayJST(): string {
+	return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Tokyo" }).format(
+		new Date(),
+	);
+}
 
 export async function POST(request: NextRequest) {
 	let body: unknown;
@@ -40,6 +51,7 @@ export async function POST(request: NextRequest) {
 		moodId,
 		custom,
 		customPersona,
+		customName,
 		nickname,
 	} = body as Record<string, unknown>;
 
@@ -61,6 +73,47 @@ export async function POST(request: NextRequest) {
 		});
 	}
 
+	// 認証と会員種別を一度だけ取得（回数制限・カスタム推しの両方で使う）
+	const supabase = await createClient();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+	let isMember = false;
+	if (user) {
+		const { data: membership } = await supabase
+			.from("memberships")
+			.select("status")
+			.eq("user_id", user.id)
+			.eq("status", "active")
+			.single();
+		isMember = !!membership;
+	}
+
+	// AIコスト保護: ログインユーザーはサーバー側で1日の回数を制限
+	const today = todayJST();
+	let usedToday = 0;
+	if (user) {
+		const limit = isMember ? DAILY_LIMIT_MEMBER : DAILY_LIMIT_LOGGED_IN;
+		const { data: usage } = await supabase
+			.from("usage_counts")
+			.select("count")
+			.eq("user_id", user.id)
+			.eq("app_id", APP_ID)
+			.eq("date", today)
+			.single();
+		usedToday = usage?.count ?? 0;
+		if (usedToday >= limit) {
+			return NextResponse.json(
+				{
+					error: isMember
+						? `本日の上限（1日${limit}回）に達しました。また明日ゆっくり話しましょう。`
+						: `本日の上限（1日${limit}回）に達しました。サポーターになると上限が増えます。また明日ね。`,
+				},
+				{ status: 429 },
+			);
+		}
+	}
+
 	const mood = getMood(typeof moodId === "string" ? moodId : "");
 	// 調子が低い日は安全弁として強めトーンを抑える
 	const requested = typeof toneLevel === "number" ? toneLevel : 3;
@@ -74,28 +127,17 @@ export async function POST(request: NextRequest) {
 			? nickname.trim().slice(0, MAX_NICKNAME_LENGTH)
 			: "";
 
-	// 人格の決定。カスタム推しは会員種別をサーバーで検証して字数を制限する。
+	// 人格の決定。カスタム推しは会員種別で字数を制限する。
 	let personaPrompt: string;
 	let isSpartan = false;
 	if (personaId === CUSTOM_PERSONA_ID) {
-		// ログイン必須・サポーターは長め、通常ログインは短め
-		const supabase = await createClient();
-		const {
-			data: { user },
-		} = await supabase.auth.getUser();
 		if (!user) {
 			return NextResponse.json(
 				{ error: "カスタム推しはログインすると使えます" },
 				{ status: 403 },
 			);
 		}
-		const { data: membership } = await supabase
-			.from("memberships")
-			.select("status")
-			.eq("user_id", user.id)
-			.eq("status", "active")
-			.single();
-		const cap = membership
+		const cap = isMember
 			? CUSTOM_PERSONA_MAX_NORMAL
 			: CUSTOM_PERSONA_MAX_MEDIUM;
 		const cp =
@@ -108,7 +150,11 @@ export async function POST(request: NextRequest) {
 				{ status: 400 },
 			);
 		}
-		personaPrompt = `あなたはユーザーが作った『自分だけの推し』です。以下の設定になりきって応援してください。\n設定:「${cp}」`;
+		const cName =
+			typeof customName === "string" && customName.trim() !== ""
+				? customName.trim().slice(0, MAX_NICKNAME_LENGTH)
+				: "";
+		personaPrompt = `あなたはユーザーが作った『自分だけの推し』${cName ? `（名前は「${cName}」）` : ""}です。以下の設定になりきって応援してください。${cName ? `自分のことは「${cName}」と名乗ってよい。` : ""}\n設定:「${cp}」`;
 	} else {
 		const persona = getPersona(typeof personaId === "string" ? personaId : "");
 		personaPrompt = persona.prompt;
@@ -165,6 +211,19 @@ ${tone.prompt}
 
 		if (!cheer) {
 			throw new Error("empty response");
+		}
+
+		// ログインユーザーは利用回数を加算（サーバー側集計）
+		if (user) {
+			await supabase.from("usage_counts").upsert(
+				{
+					user_id: user.id,
+					app_id: APP_ID,
+					date: today,
+					count: usedToday + 1,
+				},
+				{ onConflict: "user_id,app_id,date" },
+			);
 		}
 
 		return NextResponse.json({ crisis: false, message: cheer });

@@ -26,10 +26,22 @@ type LogEntry = {
 	text: string;
 	message: string;
 	personaId: string;
+	// 表示名・絵文字（カスタム推しは自分でつけた名前が入る）
+	personaLabel?: string;
+	personaEmoji?: string;
 };
 
 function personaFor(id: string) {
 	return id === CUSTOM_PERSONA_ID ? CUSTOM_PERSONA : getPersona(id);
+}
+
+// ログ表示用: 保存済みの名前を優先し、なければプリセットから解決
+function logLabel(e: LogEntry): { emoji: string; label: string } {
+	const base = personaFor(e.personaId);
+	return {
+		emoji: e.personaEmoji ?? base.emoji,
+		label: e.personaLabel ?? base.label,
+	};
 }
 
 function todayKey(): string {
@@ -63,6 +75,7 @@ export default function Home() {
 	const [personaId, setPersonaId] = useState("oshi");
 	const [toneLevel, setToneLevel] = useState(2);
 	const [nickname, setNickname] = useState("");
+	const [customName, setCustomName] = useState("");
 	const [customPersona, setCustomPersona] = useState("");
 	const [text, setText] = useState("");
 	const [message, setMessage] = useState("");
@@ -102,10 +115,19 @@ export default function Home() {
 		personaId !== CUSTOM_PERSONA_ID || customPersona.trim().length > 0;
 	const canSubmit = text.trim().length > 0 && customReady && !loading;
 
+	// 表示用の推し（カスタムは自分でつけた名前を使う）
+	const displayPersona =
+		personaId === CUSTOM_PERSONA_ID
+			? {
+					...CUSTOM_PERSONA,
+					label: customName.trim() || "わたしの推し",
+				}
+			: getPersona(personaId);
+
 	const handleSubmit = async () => {
 		if (!isLoggedIn && getUsage() >= FREE_LIMIT) {
 			setError(
-				"未ログインでは1日3回までです。ログインすると回数無制限になります。",
+				"未ログインでは1日3回までです。ログインすると1日10回まで使えます。",
 			);
 			return;
 		}
@@ -131,6 +153,7 @@ export default function Home() {
 					moodId,
 					nickname,
 					customPersona: personaId === CUSTOM_PERSONA_ID ? customPersona : "",
+					customName: personaId === CUSTOM_PERSONA_ID ? customName : "",
 				}),
 			});
 			const data = await res.json();
@@ -147,6 +170,8 @@ export default function Home() {
 						text,
 						message: data.message,
 						personaId,
+						personaLabel: displayPersona.label,
+						personaEmoji: displayPersona.emoji,
 					};
 					const next = [entry, ...log].slice(0, 30);
 					setLog(next);
@@ -210,6 +235,68 @@ export default function Home() {
 								canUsePremium={isLoggedIn}
 							/>
 
+							{/* 自分だけの推しを作る（目立つ導線） */}
+							<button
+								type="button"
+								onClick={() =>
+									isLoggedIn &&
+									setPersonaId(
+										personaId === CUSTOM_PERSONA_ID
+											? "oshi"
+											: CUSTOM_PERSONA_ID,
+									)
+								}
+								disabled={!isLoggedIn}
+								className={`w-full rounded-2xl border-2 border-dashed px-4 py-3 text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+									personaId === CUSTOM_PERSONA_ID
+										? "border-primary bg-primary/10 text-primary"
+										: "border-primary/40 text-primary hover:bg-primary/5"
+								} ${!isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}`}
+							>
+								💖 自分だけの推しを作る
+								{!isLoggedIn && (
+									<span className="text-[11px] font-normal text-muted-foreground">
+										（ログインで解放）
+									</span>
+								)}
+							</button>
+
+							{personaId === CUSTOM_PERSONA_ID && (
+								<div className="space-y-3 rounded-2xl bg-primary/5 border border-primary/20 p-4">
+									<div className="space-y-1.5">
+										<p className="text-sm font-bold text-muted-foreground">
+											推しの名前
+										</p>
+										<input
+											type="text"
+											value={customName}
+											onChange={(e) => setCustomName(e.target.value)}
+											placeholder="例: ミナト、先輩、りんちゃん"
+											maxLength={20}
+											className="w-full rounded-2xl border border-border bg-white px-4 py-2.5 text-sm outline-none focus:border-primary"
+										/>
+									</div>
+									<div className="space-y-1.5">
+										<p className="text-sm font-bold text-muted-foreground">
+											どんな推し？（性格・口調・キャラを自由に）
+										</p>
+										<textarea
+											value={customPersona}
+											onChange={(e) => setCustomPersona(e.target.value)}
+											placeholder="例: クールで無口だけど、いざという時だけ優しい先輩。低い声でボソッと励ましてくれる"
+											maxLength={isMember ? 500 : 120}
+											rows={3}
+											className="w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm outline-none focus:border-primary resize-none"
+										/>
+										<p className="text-[11px] text-muted-foreground">
+											{isMember
+												? `サポーター特典で最大500字まで（残り${500 - customPersona.length}字）`
+												: `ログインユーザーは最大120字まで（残り${120 - customPersona.length}字）。サポーターになると500字まで作り込めます`}
+										</p>
+									</div>
+								</div>
+							)}
+
 							<div className="space-y-1.5">
 								<p className="text-sm font-bold text-muted-foreground">
 									ニックネーム（呼んでほしい名前・任意）
@@ -223,27 +310,6 @@ export default function Home() {
 									className="w-full rounded-2xl border border-border bg-white px-4 py-2.5 text-sm outline-none focus:border-primary"
 								/>
 							</div>
-
-							{personaId === CUSTOM_PERSONA_ID && (
-								<div className="space-y-1.5">
-									<p className="text-sm font-bold text-muted-foreground">
-										自分の推しを作る（性格・口調・キャラを自由に）
-									</p>
-									<textarea
-										value={customPersona}
-										onChange={(e) => setCustomPersona(e.target.value)}
-										placeholder="例: クールで無口だけど、いざという時だけ優しい先輩。低い声でボソッと励ましてくれる"
-										maxLength={isMember ? 500 : 120}
-										rows={3}
-										className="w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm outline-none focus:border-primary resize-none"
-									/>
-									<p className="text-[11px] text-muted-foreground">
-										{isMember
-											? `サポーター特典で最大500字まで（残り${500 - customPersona.length}字）`
-											: `ログインユーザーは最大120字まで（残り${120 - customPersona.length}字）。サポーターになると500字まで作り込めます`}
-									</p>
-								</div>
-							)}
 
 							<ToneSlider
 								level={toneLevel}
@@ -327,7 +393,7 @@ export default function Home() {
 							今日の調子: {getMood(moodId).emoji} {getMood(moodId).label}
 						</div>
 						<CheerCard
-							persona={personaFor(personaId)}
+							persona={displayPersona}
 							message={message}
 							onReset={handleReset}
 						/>
@@ -353,8 +419,7 @@ export default function Home() {
 										className="rounded-2xl border border-border bg-white p-4"
 									>
 										<p className="text-xs text-muted-foreground mb-1">
-											{personaFor(e.personaId).emoji}{" "}
-											{personaFor(e.personaId).label}より
+											{logLabel(e).emoji} {logLabel(e).label}より
 										</p>
 										<p className="text-sm text-foreground leading-relaxed">
 											{e.message}
