@@ -160,12 +160,6 @@ export function CheerCard({
 					もう一度
 				</button>
 			</div>
-
-			<p className="text-[11px] text-muted-foreground text-center leading-relaxed">
-				これは医療・治療を目的としたサービスではありません。
-				<br />
-				つらさが続くときは、専門の窓口や医療機関にご相談ください。
-			</p>
 		</div>
 	);
 }
