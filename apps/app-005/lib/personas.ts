@@ -65,3 +65,15 @@ export const PERSONAS: Persona[] = [
 export function getPersona(id: string): Persona {
 	return PERSONAS.find((p) => p.id === id) ?? PERSONAS[0];
 }
+
+// カスタム推し（ユーザーが自作するプロンプト）。固定promptは持たない。
+export const CUSTOM_PERSONA_ID = "custom";
+
+export const CUSTOM_PERSONA: Persona = {
+	id: CUSTOM_PERSONA_ID,
+	label: "自分の推し",
+	emoji: "💖",
+	tagline: "自分で作る（要ログイン）",
+	premium: true,
+	prompt: "",
+};

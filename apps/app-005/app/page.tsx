@@ -9,7 +9,7 @@ import { FadeIn, PressScale } from "@/components/motion";
 import { PersonaPicker } from "@/components/persona-picker";
 import { ToneSlider } from "@/components/tone-slider";
 import { getMood } from "@/lib/moods";
-import { getPersona } from "@/lib/personas";
+import { CUSTOM_PERSONA, CUSTOM_PERSONA_ID, getPersona } from "@/lib/personas";
 
 const RATE_KEY = "yoshiyoshi_usage";
 const LOG_KEY = "yoshiyoshi_log";
@@ -27,6 +27,10 @@ type LogEntry = {
 	message: string;
 	personaId: string;
 };
+
+function personaFor(id: string) {
+	return id === CUSTOM_PERSONA_ID ? CUSTOM_PERSONA : getPersona(id);
+}
 
 function todayKey(): string {
 	return new Date().toDateString();
@@ -59,7 +63,7 @@ export default function Home() {
 	const [personaId, setPersonaId] = useState("oshi");
 	const [toneLevel, setToneLevel] = useState(2);
 	const [nickname, setNickname] = useState("");
-	const [custom, setCustom] = useState("");
+	const [customPersona, setCustomPersona] = useState("");
 	const [text, setText] = useState("");
 	const [message, setMessage] = useState("");
 	const [crisis, setCrisis] = useState<CrisisData | null>(null);
@@ -94,7 +98,9 @@ export default function Home() {
 	}, []);
 
 	const showResult = message !== "" || crisis !== null;
-	const canSubmit = text.trim().length > 0 && !loading;
+	const customReady =
+		personaId !== CUSTOM_PERSONA_ID || customPersona.trim().length > 0;
+	const canSubmit = text.trim().length > 0 && customReady && !loading;
 
 	const handleSubmit = async () => {
 		if (!isLoggedIn && getUsage() >= FREE_LIMIT) {
@@ -124,7 +130,7 @@ export default function Home() {
 					toneLevel,
 					moodId,
 					nickname,
-					custom: isMember ? custom : "",
+					customPersona: personaId === CUSTOM_PERSONA_ID ? customPersona : "",
 				}),
 			});
 			const data = await res.json();
@@ -218,27 +224,32 @@ export default function Home() {
 								/>
 							</div>
 
+							{personaId === CUSTOM_PERSONA_ID && (
+								<div className="space-y-1.5">
+									<p className="text-sm font-bold text-muted-foreground">
+										自分の推しを作る（性格・口調・キャラを自由に）
+									</p>
+									<textarea
+										value={customPersona}
+										onChange={(e) => setCustomPersona(e.target.value)}
+										placeholder="例: クールで無口だけど、いざという時だけ優しい先輩。低い声でボソッと励ましてくれる"
+										maxLength={isMember ? 500 : 120}
+										rows={3}
+										className="w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm outline-none focus:border-primary resize-none"
+									/>
+									<p className="text-[11px] text-muted-foreground">
+										{isMember
+											? `サポーター特典で最大500字まで（残り${500 - customPersona.length}字）`
+											: `ログインユーザーは最大120字まで（残り${120 - customPersona.length}字）。サポーターになると500字まで作り込めます`}
+									</p>
+								</div>
+							)}
+
 							<ToneSlider
 								level={toneLevel}
 								onChange={setToneLevel}
 								fullRange={isLoggedIn}
 							/>
-
-							{isMember && (
-								<div className="space-y-1.5">
-									<p className="text-sm font-bold text-muted-foreground">
-										口調の希望（サポーター向け）
-									</p>
-									<input
-										type="text"
-										value={custom}
-										onChange={(e) => setCustom(e.target.value)}
-										placeholder="例: 「〇〇ちゃん」と呼んで／関西弁で"
-										maxLength={100}
-										className="w-full rounded-2xl border border-border bg-white px-4 py-2.5 text-sm outline-none focus:border-primary"
-									/>
-								</div>
-							)}
 
 							<div className="space-y-2">
 								<textarea
@@ -316,7 +327,7 @@ export default function Home() {
 							今日の調子: {getMood(moodId).emoji} {getMood(moodId).label}
 						</div>
 						<CheerCard
-							persona={getPersona(personaId)}
+							persona={personaFor(personaId)}
 							message={message}
 							onReset={handleReset}
 						/>
@@ -342,8 +353,8 @@ export default function Home() {
 										className="rounded-2xl border border-border bg-white p-4"
 									>
 										<p className="text-xs text-muted-foreground mb-1">
-											{getPersona(e.personaId).emoji}{" "}
-											{getPersona(e.personaId).label}より
+											{personaFor(e.personaId).emoji}{" "}
+											{personaFor(e.personaId).label}より
 										</p>
 										<p className="text-sm text-foreground leading-relaxed">
 											{e.message}
