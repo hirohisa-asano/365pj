@@ -14,10 +14,11 @@ const MAX_NICKNAME_LENGTH = 20;
 // カスタム推しのプロンプト上限（プラン別）
 const CUSTOM_PERSONA_MAX_MEDIUM = 120;
 const CUSTOM_PERSONA_MAX_NORMAL = 500;
-// AIコスト保護: ログインユーザーの1日あたり回数制限（サーバー側集計）
+// AIコスト保護: ログインユーザーの回数制限（サーバー側集計）
+// 非会員ログイン: 1日5回 かつ 累計30回まで（超えたら課金導線）。サポーターは無制限。
 const APP_ID = "app-005";
-const DAILY_LIMIT_LOGGED_IN = 10;
-const DAILY_LIMIT_MEMBER = 50;
+const DAILY_LIMIT_LOGGED_IN = 5;
+const TOTAL_FREE_CAP = 30;
 
 // JSTの今日の日付（YYYY-MM-DD）
 function todayJST(): string {
@@ -89,25 +90,31 @@ export async function POST(request: NextRequest) {
 		isMember = !!membership;
 	}
 
-	// AIコスト保護: ログインユーザーはサーバー側で1日の回数を制限
+	// AIコスト保護: ログインユーザーはサーバー側で回数を制限
+	// サポーターは無制限。非会員は「1日5回」かつ「累計30回」で課金導線。
 	const today = todayJST();
 	let usedToday = 0;
-	if (user) {
-		const limit = isMember ? DAILY_LIMIT_MEMBER : DAILY_LIMIT_LOGGED_IN;
-		const { data: usage } = await supabase
+	if (user && !isMember) {
+		const { data: rows } = await supabase
 			.from("usage_counts")
-			.select("count")
+			.select("count,date")
 			.eq("user_id", user.id)
-			.eq("app_id", APP_ID)
-			.eq("date", today)
-			.single();
-		usedToday = usage?.count ?? 0;
-		if (usedToday >= limit) {
+			.eq("app_id", APP_ID);
+		const lifetime = (rows ?? []).reduce((s, r) => s + (r.count ?? 0), 0);
+		usedToday = rows?.find((r) => r.date === today)?.count ?? 0;
+
+		if (lifetime >= TOTAL_FREE_CAP) {
 			return NextResponse.json(
 				{
-					error: isMember
-						? `本日の上限（1日${limit}回）に達しました。また明日ゆっくり話しましょう。`
-						: `本日の上限（1日${limit}回）に達しました。サポーターになると上限が増えます。また明日ね。`,
+					error: `無料でのご利用は累計${TOTAL_FREE_CAP}回までです。ここまで来られたあなたは十分えらい。これからも一緒にいるには、サポーター登録をお願いします。`,
+				},
+				{ status: 402 },
+			);
+		}
+		if (usedToday >= DAILY_LIMIT_LOGGED_IN) {
+			return NextResponse.json(
+				{
+					error: `本日の上限（1日${DAILY_LIMIT_LOGGED_IN}回）に達しました。また明日ゆっくり話しましょう。`,
 				},
 				{ status: 429 },
 			);
@@ -213,8 +220,8 @@ ${tone.prompt}
 			throw new Error("empty response");
 		}
 
-		// ログインユーザーは利用回数を加算（サーバー側集計）
-		if (user) {
+		// 非会員ログインユーザーのみ利用回数を加算（サポーターは無制限のため集計不要）
+		if (user && !isMember) {
 			await supabase.from("usage_counts").upsert(
 				{
 					user_id: user.id,

@@ -14,7 +14,10 @@ import { CUSTOM_PERSONA, CUSTOM_PERSONA_ID, getPersona } from "@/lib/personas";
 const RATE_KEY = "yoshiyoshi_usage";
 const LOG_KEY = "yoshiyoshi_log";
 const NICK_KEY = "yoshiyoshi_nickname";
-const FREE_LIMIT = 3;
+const TOTAL_KEY = "yoshiyoshi_total";
+// 未ログイン: 1日1回 かつ 累計10回まで（超えたらログイン導線）※localStorageのソフト制限
+const FREE_LIMIT = 1;
+const FREE_TOTAL = 10;
 
 type CrisisData = {
 	message: string;
@@ -65,6 +68,22 @@ function bumpUsage(): void {
 			RATE_KEY,
 			JSON.stringify({ date: todayKey(), count: getUsage() + 1 }),
 		);
+	} catch {
+		// ignore
+	}
+}
+
+function getTotal(): number {
+	try {
+		return Number(localStorage.getItem(TOTAL_KEY) ?? "0");
+	} catch {
+		return 0;
+	}
+}
+
+function bumpTotal(): void {
+	try {
+		localStorage.setItem(TOTAL_KEY, String(getTotal() + 1));
 	} catch {
 		// ignore
 	}
@@ -125,11 +144,19 @@ export default function Home() {
 			: getPersona(personaId);
 
 	const handleSubmit = async () => {
-		if (!isLoggedIn && getUsage() >= FREE_LIMIT) {
-			setError(
-				"未ログインでは1日3回までです。ログインすると1日10回まで使えます。",
-			);
-			return;
+		if (!isLoggedIn) {
+			if (getTotal() >= FREE_TOTAL) {
+				setError(
+					`お試しの累計${FREE_TOTAL}回を使いきりました。ログインすると続けられます（1日5回まで）。`,
+				);
+				return;
+			}
+			if (getUsage() >= FREE_LIMIT) {
+				setError(
+					"未ログインでは1日1回までです。ログインすると1日5回まで使えます。",
+				);
+				return;
+			}
 		}
 
 		setLoading(true);
@@ -163,7 +190,10 @@ export default function Home() {
 				setCrisis({ message: data.message, resources: data.resources });
 			} else {
 				setMessage(data.message);
-				if (!isLoggedIn) bumpUsage();
+				if (!isLoggedIn) {
+					bumpUsage();
+					bumpTotal();
+				}
 				if (isLoggedIn) {
 					const entry: LogEntry = {
 						id: Date.now(),
